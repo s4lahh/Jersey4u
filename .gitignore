@@ -1,0 +1,35 @@
+# =========================================================================
+# Jersey4U - Root .gitignore
+# =========================================================================
+
+# Secrets and local configurations
+*.env
+*.env.local
+application-secret.properties
+application-local.properties
+
+# Java / Maven build outputs
+backend/target/
+**/target/
+*.class
+*.jar
+*.war
+
+# Node.js / React build outputs
+frontend/node_modules/
+**/node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+
+# IDE / Editor configuration
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS temporary files
+Thumbs.db
+.DS_Store
