@@ -1,9 +1,18 @@
+import { useState } from 'react';
 import Navbar from './components/Navbar';
 import JerseyCard from './components/JerseyCard';
 import './App.css';
 
 function App() {
-  // 1. Data created in the Parent (App)
+  // 1. STATE: How many items are in the shopping cart?
+  const [cartCount, setCartCount] = useState(0);
+
+  // 2. STATE HANDLER: Function to increment cart count when a jersey is added
+  function handleAddToCart(jersey, size) {
+    setCartCount(cartCount + 1);
+  }
+
+  // Sample jersey data
   const realMadrid = {
     name: 'Real Madrid 2024/25 Home Kit',
     team: 'Real Madrid',
@@ -31,24 +40,25 @@ function App() {
     price: 84.99,
     originalPrice: 99.99,
     imageUrl: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=600&q=80',
-    inStock: false // Out of stock to test our disabled button prop!
+    inStock: false
   };
 
   return (
     <div className="app">
-      <Navbar />
+      {/* Passing cartCount state down to Navbar via Props! */}
+      <Navbar cartCount={cartCount} />
 
       <main className="main-content">
         <section className="hero-section">
-          <h1>Welcome to <span className="highlight">Jersey4U</span></h1>
-          <p>Authentic Club, National & Retro Football Kits</p>
+          <h1>WEAR THE ARMOR. <span className="highlight">FEEL THE GLORY.</span></h1>
+          <p>Official authentic club kits, legendary retro treasures, and bespoke player customization.</p>
         </section>
 
-        {/* 2. Passing data DOWN to child components via Props! */}
+        {/* Passing handleAddToCart handler down to JerseyCards via Props! */}
         <div className="jersey-grid">
-          <JerseyCard jersey={realMadrid} />
-          <JerseyCard jersey={barcelona} />
-          <JerseyCard jersey={arsenal} />
+          <JerseyCard jersey={realMadrid} onAddToCart={handleAddToCart} />
+          <JerseyCard jersey={barcelona} onAddToCart={handleAddToCart} />
+          <JerseyCard jersey={arsenal} onAddToCart={handleAddToCart} />
         </div>
       </main>
     </div>

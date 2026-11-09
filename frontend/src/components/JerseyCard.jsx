@@ -1,23 +1,37 @@
+import { useState } from 'react';
 import './JerseyCard.css';
 
-function JerseyCard({ jersey }) {
-  // Destructure the properties from the jersey object
+function JerseyCard({ jersey, onAddToCart }) {
   const { name, team, league, price, originalPrice, imageUrl, inStock } = jersey;
+
+  // 1. STATE: Which size is selected? (Default is 'M')
+  const [selectedSize, setSelectedSize] = useState('M');
+
+  // 2. STATE: Is this jersey saved in Wishlist? (Default is false)
+  const [isLiked, setIsLiked] = useState(false);
+
+  const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
   return (
     <div className="jersey-card">
-      {/* 1. Image & League Tag */}
       <div className="jersey-image-container">
         <img src={imageUrl} alt={name} className="jersey-img" />
         <span className="league-tag">{league}</span>
+
+        {/* Wishlist Heart Toggle */}
+        <button
+          className="wishlist-btn"
+          onClick={() => setIsLiked(!isLiked)}
+          title="Save to Wishlist"
+        >
+          {isLiked ? '❤️' : '🤍'}
+        </button>
       </div>
 
-      {/* 2. Product Details */}
       <div className="jersey-content">
         <span className="team-label">{team}</span>
         <h3 className="jersey-name">{name}</h3>
 
-        {/* 3. Pricing Row */}
         <div className="price-row">
           <span className="current-price">${price}</span>
           {originalPrice && (
@@ -25,9 +39,30 @@ function JerseyCard({ jersey }) {
           )}
         </div>
 
-        {/* 4. Action Button with Boolean Condition */}
-        <button className="card-btn" disabled={!inStock}>
-          {inStock ? 'Add to Cart 🛒' : 'Sold Out'}
+        {/* Interactive Size Chips */}
+        <div className="size-selector">
+          <span className="size-label">Select Size:</span>
+          <div className="size-chips">
+            {sizes.map((size) => (
+              <button
+                key={size}
+                type="button"
+                className={`size-chip ${selectedSize === size ? 'active' : ''}`}
+                onClick={() => setSelectedSize(size)}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Add to Cart Button */}
+        <button
+          className="card-btn"
+          disabled={!inStock}
+          onClick={() => onAddToCart && onAddToCart(jersey, selectedSize)}
+        >
+          {inStock ? `Add to Cart (${selectedSize}) 🛒` : 'Sold Out'}
         </button>
       </div>
     </div>

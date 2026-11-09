@@ -1,16 +1,16 @@
 import './Navbar.css';
 
-function Navbar() {
+function Navbar({ cartCount = 0 }) {
   return (
     <nav className="navbar">
       <div className="nav-container">
-        {/* 1. Brand Logo */}
+        {/* Brand Logo */}
         <div className="nav-logo">
           <span className="logo-icon">⚽</span>
           <span className="logo-text">Jersey<span className="highlight">4U</span></span>
         </div>
 
-        {/* 2. Navigation Categories */}
+        {/* Navigation Categories */}
         <ul className="nav-links">
           <li><a href="#all" className="active">All Kits</a></li>
           <li><a href="#laliga">La Liga</a></li>
@@ -18,10 +18,10 @@ function Navbar() {
           <li><a href="#retro">Retro Classics</a></li>
         </ul>
 
-        {/* 3. Cart Button with Counter Badge */}
+        {/* Dynamic Shopping Cart Button driven by Props & State! */}
         <div className="nav-actions">
           <button className="cart-btn">
-            🛒 Cart <span className="cart-badge">0</span>
+            🛒 Cart <span className="cart-badge">{cartCount}</span>
           </button>
         </div>
       </div>
