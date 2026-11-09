@@ -23,7 +23,7 @@ function App() {
   // 4. STATE: Active Product Detail Modal
   const [activeJerseyDetail, setActiveJerseyDetail] = useState(null);
 
-  // Master Curated Catalog of Football Kits with Full Descriptions & Specs
+  // Master Curated Catalog of Football Kits with INR Pricing & Full Details
   const allJerseys = [
     {
       id: 1,
@@ -31,16 +31,16 @@ function App() {
       team: 'Real Madrid',
       league: 'La Liga',
       season: '24/25',
-      price: 89.99,
-      originalPrice: 109.99,
+      price: 899,
+      originalPrice: 1499,
       imageUrl: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=800&q=80',
       inStock: true,
       description:
         "The official 2024/25 Real Madrid Home Jersey honors the club's eternal elegance and unmatched European dominance. Crafted with an exclusive houndstooth texture inspired by traditional 'chulapo' attire from Madrid's annual San Isidro Fiesta, this kit embodies pure royal Madridismo.",
       features: [
-        'Official Authentic matchday player edition',
+        'Official Master-Quality matchday player edition',
         'HEAT.RDY cooling fabric technology with engineered mesh ventilation',
-        'Metallic gold Real Madrid heat-applied crest and embroidered accents',
+        'Metallic gold Real Madrid embroidered crest and accents',
         'Official LALIGA EA SPORTS sleeve badge included',
         '100% Recycled polyester double-knit performance fabric'
       ]
@@ -51,8 +51,8 @@ function App() {
       team: 'FC Barcelona',
       league: 'La Liga',
       season: '24/25',
-      price: 89.99,
-      originalPrice: 109.99,
+      price: 899,
+      originalPrice: 1499,
       imageUrl: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80',
       inStock: true,
       description:
@@ -71,8 +71,8 @@ function App() {
       team: 'Manchester City',
       league: 'Premier League',
       season: '24/25',
-      price: 84.99,
-      originalPrice: 99.99,
+      price: 849,
+      originalPrice: 1399,
       imageUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
       inStock: true,
       description:
@@ -91,8 +91,8 @@ function App() {
       team: 'Arsenal',
       league: 'Premier League',
       season: '24/25',
-      price: 84.99,
-      originalPrice: 99.99,
+      price: 849,
+      originalPrice: 1399,
       imageUrl: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80',
       inStock: false,
       description:
@@ -111,8 +111,8 @@ function App() {
       team: 'Argentina',
       league: 'International',
       season: '2024',
-      price: 94.99,
-      originalPrice: 119.99,
+      price: 949,
+      originalPrice: 1599,
       imageUrl: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80',
       inStock: true,
       description:
@@ -131,8 +131,8 @@ function App() {
       team: 'AC Milan',
       league: 'Retro',
       season: '06/07',
-      price: 79.99,
-      originalPrice: 95.00,
+      price: 799,
+      originalPrice: 1299,
       imageUrl: 'https://images.unsplash.com/photo-1511886929837-354d827aae26?auto=format&fit=crop&w=800&q=80',
       inStock: true,
       description:
@@ -252,7 +252,7 @@ function App() {
       {/* 2. Hero Section */}
       <Hero
         onQuickAdd={handleAddToCart}
-        onOpenDetails={(heroKit) => {
+        onOpenDetails={() => {
           const match = allJerseys.find((j) => j.team === 'Real Madrid') || allJerseys[0];
           setActiveJerseyDetail(match);
         }}
@@ -293,14 +293,14 @@ function App() {
         </div>
       </main>
 
-      {/* 5. Minimal Vault Footer */}
+      {/* 5. Minimal Natural Studio Footer */}
       <footer className="vault-footer">
         <div className="footer-container">
           <div className="footer-brand">
             <span className="footer-logo">⚽ JERSEY4U</span>
-            <span className="footer-tagline">THE FOOTBALL VAULT • 100% AUTHENTIC MERCHANDISE</span>
+            <span className="footer-tagline">THE FOOTBALL VAULT • 100% EMBROIDERED MERCHANDISE</span>
           </div>
-          <p className="footer-copy">© 2026 Jersey4U. Built with Spring Boot 3, MySQL 8 & React.</p>
+          <p className="footer-copy">© 2026 Jersey4U India. Built with Spring Boot 3, MySQL 8 & React.</p>
         </div>
       </footer>
 

@@ -2,8 +2,8 @@
 .product-modal-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(3, 7, 18, 0.85);
-  backdrop-filter: blur(10px);
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
   z-index: 2500;
   display: flex;
   align-items: center;
@@ -23,21 +23,21 @@
 
 /* Modal Container */
 .product-modal-container {
-  background-color: #0b0f19;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 1rem;
   max-width: 980px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 30px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.25);
   animation: modalScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes modalScaleUp {
   from {
-    transform: scale(0.95);
+    transform: scale(0.96);
     opacity: 0;
   }
   to {
@@ -51,13 +51,13 @@
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #94a3b8;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,9 +67,9 @@
 }
 
 .modal-close-btn:hover {
-  background: rgba(239, 68, 68, 0.2);
+  background: #fee2e2;
   color: #ef4444;
-  border-color: #ef4444;
+  border-color: #fca5a5;
 }
 
 /* Content Grid */
@@ -91,10 +91,10 @@
   position: relative;
   width: 100%;
   height: 420px;
-  background-color: #020617;
+  background-color: #f8fafc;
   border-radius: 0.85rem;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid #e2e8f0;
 }
 
 .modal-main-image {
@@ -107,35 +107,37 @@
   position: absolute;
   top: 1rem;
   left: 1rem;
-  background: rgba(11, 15, 25, 0.85);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
-  color: #e2e8f0;
+  color: #0f172a;
   font-size: 0.75rem;
   font-weight: 800;
   padding: 0.35rem 0.75rem;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid #e2e8f0;
   text-transform: uppercase;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .modal-wishlist-toggle {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: rgba(11, 15, 25, 0.85);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
   font-size: 0.82rem;
   font-weight: 700;
   padding: 0.35rem 0.75rem;
   border-radius: 9999px;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .modal-wishlist-toggle:hover {
-  border-color: #ef4444;
+  border-color: #fca5a5;
   transform: scale(1.05);
 }
 
@@ -144,11 +146,11 @@
   justify-content: space-between;
   gap: 0.5rem;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: #475569;
   font-weight: 700;
-  padding: 0.65rem 0.85rem;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.75rem 0.85rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
 }
 
@@ -161,7 +163,7 @@
 .modal-team-kicker {
   font-size: 0.8rem;
   font-weight: 900;
-  color: #38bdf8;
+  color: #2563eb;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   margin-bottom: 0.35rem;
@@ -170,7 +172,7 @@
 .modal-product-title {
   font-size: 1.75rem;
   font-weight: 900;
-  color: #ffffff;
+  color: #0f172a;
   letter-spacing: -0.5px;
   margin: 0 0 0.65rem 0;
   line-height: 1.2;
@@ -184,13 +186,13 @@
 }
 
 .stars {
-  color: #facc15;
+  color: #f59e0b;
   font-size: 0.95rem;
 }
 
 .rating-text {
-  font-size: 0.8rem;
-  color: #94a3b8;
+  font-size: 0.82rem;
+  color: #64748b;
   font-weight: 600;
 }
 
@@ -202,25 +204,25 @@
   flex-wrap: wrap;
   padding-bottom: 1.25rem;
   margin-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .modal-current-price {
   font-size: 1.85rem;
   font-weight: 900;
-  color: #facc15;
+  color: #0f172a;
 }
 
 .modal-orig-price {
   font-size: 1.15rem;
-  color: #64748b;
+  color: #94a3b8;
   text-decoration: line-through;
 }
 
 .modal-discount-tag {
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
   font-size: 0.75rem;
   font-weight: 800;
   padding: 0.2rem 0.55rem;
@@ -231,21 +233,21 @@
   margin-left: auto;
   font-size: 0.8rem;
   font-weight: 700;
-  color: #cbd5e1;
+  color: #475569;
 }
 
 /* Tabs */
 .modal-tabs-header {
   display: flex;
   gap: 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #e2e8f0;
   margin-bottom: 1rem;
 }
 
 .modal-tab-btn {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: #64748b;
   font-size: 0.9rem;
   font-weight: 700;
   padding-bottom: 0.6rem;
@@ -255,11 +257,11 @@
 }
 
 .modal-tab-btn:hover {
-  color: #ffffff;
+  color: #0f172a;
 }
 
 .modal-tab-btn.active {
-  color: #ffffff;
+  color: #0f172a;
 }
 
 .modal-tab-btn.active::after {
@@ -269,7 +271,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background-color: #2563eb;
+  background-color: #0f172a;
 }
 
 .modal-tab-content {
@@ -280,7 +282,7 @@
 .modal-description-text {
   font-size: 0.9rem;
   line-height: 1.6;
-  color: #cbd5e1;
+  color: #475569;
   margin: 0;
 }
 
@@ -295,12 +297,12 @@
 
 .modal-specs-list li {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .modal-delivery-info {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: #475569;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -324,13 +326,13 @@
 .size-section-label {
   font-size: 0.85rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
   text-transform: uppercase;
 }
 
 .size-guide-hint {
   font-size: 0.78rem;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .modal-size-chips {
@@ -340,9 +342,9 @@
 
 .modal-size-chip {
   flex: 1;
-  background: #131c31;
-  border: 1px solid #1e293b;
-  color: #cbd5e1;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #1e293b;
   font-size: 0.9rem;
   font-weight: 800;
   padding: 0.65rem 0.5rem;
@@ -352,15 +354,14 @@
 }
 
 .modal-size-chip:hover {
-  border-color: #3b82f6;
-  color: #ffffff;
+  border-color: #0f172a;
+  background: #f8fafc;
 }
 
 .modal-size-chip.active {
-  background: #2563eb;
-  border-color: #3b82f6;
+  background: #0f172a;
+  border-color: #0f172a;
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
 /* Quantity */
@@ -374,23 +375,23 @@
 .qty-label {
   font-size: 0.85rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
   text-transform: uppercase;
 }
 
 .modal-qty-control {
   display: inline-flex;
   align-items: center;
-  border: 1px solid #1e293b;
+  border: 1px solid #d1d5db;
   border-radius: 0.5rem;
-  background-color: #131c31;
+  background-color: #ffffff;
   overflow: hidden;
 }
 
 .modal-qty-btn {
   background: transparent;
   border: none;
-  color: #cbd5e1;
+  color: #334155;
   width: 36px;
   height: 34px;
   font-size: 1.1rem;
@@ -403,15 +404,15 @@
 }
 
 .modal-qty-btn:hover {
-  background-color: #1e293b;
-  color: #ffffff;
+  background-color: #f1f5f9;
+  color: #0f172a;
 }
 
 .modal-qty-value {
   padding: 0 0.85rem;
   font-size: 0.95rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
 }
 
 /* Actions Group */
@@ -423,37 +424,36 @@
 
 .modal-add-bag-btn {
   width: 100%;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: #0f172a;
   color: #ffffff;
   border: none;
   border-radius: 0.6rem;
   padding: 1rem;
   font-size: 1rem;
-  font-weight: 900;
+  font-weight: 800;
   cursor: pointer;
-  letter-spacing: 0.5px;
-  box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2);
   transition: all 0.2s ease;
 }
 
 .modal-add-bag-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: #1e293b;
   transform: translateY(-2px);
-  box-shadow: 0 15px 25px -5px rgba(37, 99, 235, 0.5);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
 }
 
 .modal-add-bag-btn:disabled {
-  background: #334155;
-  color: #64748b;
+  background: #e2e8f0;
+  color: #94a3b8;
   cursor: not-allowed;
   box-shadow: none;
 }
 
 .modal-customize-btn {
   width: 100%;
-  background: rgba(234, 179, 8, 0.12);
-  color: #facc15;
-  border: 1px solid rgba(234, 179, 8, 0.4);
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
   border-radius: 0.6rem;
   padding: 0.85rem;
   font-size: 0.9rem;
@@ -465,8 +465,7 @@
 }
 
 .modal-customize-btn:hover {
-  background: rgba(234, 179, 8, 0.2);
-  border-color: #facc15;
+  background: #fef3c7;
   transform: translateY(-2px);
 }
 

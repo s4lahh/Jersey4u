@@ -2,13 +2,12 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: #0b0f19;
+  background-color: #ffffff;
 }
 
 /* 1. Announcement Bar */
 .announcement-bar {
-  background: linear-gradient(90deg, #070b14, #0f172a, #070b14);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: #0f172a;
   padding: 0.45rem 1rem;
   text-align: center;
 }
@@ -17,22 +16,21 @@
   margin: 0;
   font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.75px;
-  color: #94a3b8;
+  letter-spacing: 0.6px;
+  color: #f8fafc;
 }
 
 /* 2. Main Navbar */
 .navbar {
-  background: rgba(11, 15, 25, 0.88);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .nav-container {
   max-width: 1320px;
   margin: 0 auto;
-  padding: 0.9rem 1.5rem;
+  padding: 0.85rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -56,13 +54,13 @@
 .logo-brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
 }
 
 .brand-name {
   font-size: 1.35rem;
   font-weight: 900;
-  color: #ffffff;
+  color: #0f172a;
   letter-spacing: -0.5px;
 }
 
@@ -71,9 +69,9 @@
   font-weight: 800;
   padding: 0.15rem 0.45rem;
   border-radius: 9999px;
-  background: rgba(212, 175, 55, 0.15);
-  color: #d4af37;
-  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
   letter-spacing: 0.75px;
 }
 
@@ -88,7 +86,7 @@
 }
 
 .nav-links a {
-  color: #94a3b8;
+  color: #475569;
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
@@ -99,18 +97,19 @@
 
 .nav-links a:hover,
 .nav-links a.active {
-  color: #ffffff;
-  border-bottom: 2px solid #2563eb;
+  color: #0f172a;
+  font-weight: 700;
+  border-bottom: 2px solid #0f172a;
 }
 
 .nav-links a.customizer-link {
-  color: #eab308;
+  color: #d97706;
   font-weight: 700;
 }
 
 .nav-links a.customizer-link:hover {
-  color: #facc15;
-  border-bottom-color: #eab308;
+  color: #b45309;
+  border-bottom-color: #d97706;
 }
 
 /* Right Utility Bar */
@@ -124,43 +123,45 @@
 .search-bar {
   display: flex;
   align-items: center;
-  background: #131c31;
-  border: 1px solid #1e293b;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 9999px;
   padding: 0.4rem 0.85rem;
   gap: 0.5rem;
   transition: all 0.2s ease;
-  width: 220px;
+  width: 210px;
 }
 
 .search-bar:focus-within {
-  border-color: #2563eb;
-  box-shadow: 0 0 12px rgba(37, 99, 235, 0.3);
-  width: 260px;
+  border-color: #0f172a;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+  width: 250px;
 }
 
 .search-icon {
   font-size: 0.85rem;
+  color: #64748b;
 }
 
 .search-input {
   background: transparent;
   border: none;
   outline: none;
-  color: #ffffff;
+  color: #0f172a;
   font-size: 0.85rem;
   width: 100%;
 }
 
 .search-input::placeholder {
-  color: #64748b;
+  color: #94a3b8;
 }
 
 /* Utility Buttons (Wishlist & Cart) */
 .utility-btn {
-  background: #131c31;
-  color: #ffffff;
-  border: 1px solid #1e293b;
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
   padding: 0.45rem 0.85rem;
   border-radius: 9999px;
   font-size: 0.88rem;
@@ -173,23 +174,25 @@
 }
 
 .utility-btn:hover {
-  background: #1e293b;
-  border-color: #3b82f6;
+  background: #f8fafc;
+  border-color: #cbd5e1;
   transform: translateY(-1px);
 }
 
 .cart-btn {
-  background: linear-gradient(135deg, #1d4ed8, #2563eb);
-  border-color: #3b82f6;
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
 }
 
 .cart-btn:hover {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  background: #1e293b;
+  border-color: #1e293b;
 }
 
 .util-badge {
-  background: #0b0f19;
-  color: #ffffff;
+  background: #f1f5f9;
+  color: #0f172a;
   font-size: 0.72rem;
   font-weight: 800;
   padding: 0.15rem 0.45rem;
@@ -199,6 +202,11 @@
 .cart-badge {
   background: #ef4444;
   color: #ffffff;
+}
+
+.wishlist-badge {
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 /* Responsive adjustments */

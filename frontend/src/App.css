@@ -1,18 +1,18 @@
-/* App Layout & Core Shell */
+/* App Layout & Core Shell - Natural Studio Theme */
 .app-layout {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #0b0f19;
-  color: #f8fafc;
+  background-color: #f8fafc;
+  color: #0f172a;
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
 /* 4. Product Catalog Wrapper */
 .catalog-wrapper {
   flex: 1;
-  padding: 3rem 1.5rem 4rem;
-  background: linear-gradient(180deg, #0b0f19 0%, #0d1322 100%);
+  padding: 3.5rem 1.5rem 5rem;
+  background: #f8fafc;
 }
 
 .catalog-container {
@@ -25,9 +25,9 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 2rem;
+  margin-bottom: 2.25rem;
   padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #e2e8f0;
   flex-wrap: wrap;
   gap: 1rem;
 }
@@ -36,7 +36,7 @@
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 1.5px;
-  color: #3b82f6;
+  color: #2563eb;
   text-transform: uppercase;
   margin-bottom: 0.35rem;
   display: block;
@@ -45,34 +45,34 @@
 .section-title {
   font-size: 2.2rem;
   font-weight: 900;
-  color: #ffffff;
+  color: #0f172a;
   letter-spacing: -0.5px;
   text-transform: uppercase;
   margin: 0;
 }
 
 .results-badge {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #475569;
   font-size: 0.85rem;
   font-weight: 700;
   padding: 0.45rem 1rem;
   border-radius: 9999px;
-  letter-spacing: 0.25px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 /* Catalog Product Grid */
 .jersey-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2.25rem;
 }
 
-/* 5. Minimal Vault Footer */
+/* 5. Minimal Natural Studio Footer */
 .vault-footer {
-  background-color: #070b14;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: #ffffff;
+  border-top: 1px solid #e2e8f0;
   padding: 3.5rem 1.5rem 2.5rem;
   margin-top: auto;
 }
@@ -98,14 +98,14 @@
 .footer-logo {
   font-size: 1.4rem;
   font-weight: 900;
-  color: #ffffff;
+  color: #0f172a;
   letter-spacing: 1.5px;
 }
 
 .footer-tagline {
   font-size: 0.75rem;
   font-weight: 800;
-  color: #d4af37;
+  color: #b45309;
   letter-spacing: 2px;
   text-transform: uppercase;
 }

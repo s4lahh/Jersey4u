@@ -1,13 +1,13 @@
 import './DiscoveryBar.css';
 
-function DiscoveryBar({ selectedLeague, onSelectLeague, totalCount = 12 }) {
+function DiscoveryBar({ selectedLeague, onSelectLeague, totalCount = 6 }) {
   const leagues = [
     { id: 'all', label: '⚽ All Vault Kits' },
     { id: 'Premier League', label: '🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League' },
     { id: 'La Liga', label: '🇪🇸 La Liga' },
     { id: 'Serie A', label: '🇮🇹 Serie A' },
     { id: 'International', label: '🌍 International' },
-    { id: 'Retro', label: '⏳ Retro Classics' },
+    { id: 'Retro', label: '⏳ Retro Classics' }
   ];
 
   const clubs = [
@@ -16,7 +16,7 @@ function DiscoveryBar({ selectedLeague, onSelectLeague, totalCount = 12 }) {
     { name: 'Arsenal', short: 'ARS', color: '#EF0107' },
     { name: 'Manchester City', short: 'MCI', color: '#6CABDD' },
     { name: 'Inter Milan', short: 'INT', color: '#00579C' },
-    { name: 'Argentina', short: 'ARG', color: '#75AADB' },
+    { name: 'Argentina', short: 'ARG', color: '#75AADB' }
   ];
 
   return (
@@ -29,7 +29,9 @@ function DiscoveryBar({ selectedLeague, onSelectLeague, totalCount = 12 }) {
               <button
                 key={league.id}
                 type="button"
-                className={`league-pill ${selectedLeague === league.id ? 'active' : ''}`}
+                className={`league-pill ${
+                  selectedLeague.toLowerCase() === league.id.toLowerCase() ? 'active' : ''
+                }`}
                 onClick={() => onSelectLeague(league.id)}
               >
                 {league.label}
@@ -62,7 +64,7 @@ function DiscoveryBar({ selectedLeague, onSelectLeague, totalCount = 12 }) {
           </div>
 
           <div className="catalog-meta">
-            <span className="count-label">Showing <strong className="count-number">{totalCount}</strong> Vault Editions</span>
+            Showing <strong className="count-number">{totalCount}</strong> Kits
           </div>
         </div>
       </div>

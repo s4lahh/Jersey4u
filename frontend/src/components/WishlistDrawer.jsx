@@ -20,7 +20,7 @@ function WishlistDrawer({
           <div className="drawer-title-box">
             <span className="drawer-icon">❤️</span>
             <div>
-              <h3 className="drawer-title">YOUR SAVED VAULT KITS</h3>
+              <h3 className="drawer-title">YOUR SAVED KITS</h3>
               <span className="drawer-count">{wishlistItems.length} Kits Saved</span>
             </div>
           </div>
@@ -41,7 +41,7 @@ function WishlistDrawer({
               <span className="empty-icon">🤍</span>
               <h4>Your Wishlist is Empty</h4>
               <p>
-                Found a dream kit you want to save for matchday? Click the heart icon on any jersey card to keep it here!
+                Found a kit you want to save for matchday? Click the heart icon on any jersey card to keep it here!
               </p>
               <button
                 type="button"
@@ -64,7 +64,7 @@ function WishlistDrawer({
                   <div className="wishlist-item-details">
                     <span className="wishlist-item-team">{jersey.team}</span>
                     <h5 className="wishlist-item-name">{jersey.name}</h5>
-                    <span className="wishlist-item-price">${jersey.price}</span>
+                    <span className="wishlist-item-price">₹{jersey.price}</span>
 
                     <div className="wishlist-actions-row">
                       <button

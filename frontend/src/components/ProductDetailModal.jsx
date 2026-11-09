@@ -30,7 +30,6 @@ function ProductDetailModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  // Default features if not present in jersey object
   const features = jersey.features || [
     'Official Authentic matchday edition with authentic club crest',
     'HEAT.RDY breathable moisture-wicking athletic mesh fabric',
@@ -86,9 +85,9 @@ function ProductDetailModal({
             </div>
 
             <div className="modal-trust-pills">
-              <span>🛡️ 100% Certified Authentic</span>
-              <span>⚡ Dispatched in 24h</span>
-              <span>🔄 30-Day Returns</span>
+              <span>🛡️ 100% Quality Guaranteed</span>
+              <span>⚡ Ships in 24h</span>
+              <span>🔄 7-Day Exchange</span>
             </div>
           </div>
 
@@ -97,17 +96,17 @@ function ProductDetailModal({
             <span className="modal-team-kicker">{jersey.team}</span>
             <h2 className="modal-product-title">{jersey.name}</h2>
 
-            {/* Rating / Match Authenticity */}
+            {/* Rating */}
             <div className="modal-rating-row">
               <span className="stars">★★★★★</span>
-              <span className="rating-text">4.9 / 5.0 (Official Match Edition)</span>
+              <span className="rating-text">4.9 / 5.0 (140+ Fan Reviews)</span>
             </div>
 
-            {/* Price Row */}
+            {/* Price Box */}
             <div className="modal-price-box">
-              <span className="modal-current-price">${jersey.price}</span>
+              <span className="modal-current-price">₹{jersey.price}</span>
               {jersey.originalPrice && (
-                <span className="modal-orig-price">${jersey.originalPrice}</span>
+                <span className="modal-orig-price">₹{jersey.originalPrice}</span>
               )}
               {discountPercentage && (
                 <span className="modal-discount-tag">SAVE {discountPercentage}%</span>
@@ -117,7 +116,7 @@ function ProductDetailModal({
               </span>
             </div>
 
-            {/* Interactive Tabs: Overview / Specs / Shipping */}
+            {/* Interactive Tabs */}
             <div className="modal-tabs-header">
               <button
                 type="button"
@@ -138,7 +137,7 @@ function ProductDetailModal({
                 className={`modal-tab-btn ${activeTab === 'delivery' ? 'active' : ''}`}
                 onClick={() => setActiveTab('delivery')}
               >
-                Shipping & Returns
+                Pan-India Delivery
               </button>
             </div>
 
@@ -157,9 +156,9 @@ function ProductDetailModal({
 
               {activeTab === 'delivery' && (
                 <div className="modal-delivery-info">
-                  <p>🚚 <strong>Express Global Delivery:</strong> Dispatched within 24 hours. Free on orders over $90.</p>
-                  <p>🔒 <strong>Secure Checkout:</strong> Encrypted payment handling via Razorpay & 3D Secure.</p>
-                  <p>🔄 <strong>Hassle-Free Returns:</strong> 30-day return policy on all non-customized authentic kits.</p>
+                  <p>🚚 <strong>Pan-India Express:</strong> Dispatched in 24 hours. Free delivery on orders above ₹999.</p>
+                  <p>💳 <strong>Payment Options:</strong> UPI (GPay/PhonePe), Credit/Debit Cards, NetBanking & COD.</p>
+                  <p>🔄 <strong>Easy Exchange:</strong> 7-day hassle-free size exchange policy.</p>
                 </div>
               )}
             </div>
@@ -168,7 +167,7 @@ function ProductDetailModal({
             <div className="modal-size-section">
               <div className="modal-size-header">
                 <span className="size-section-label">Select Size:</span>
-                <span className="size-guide-hint">📏 True to Fit (Standard European)</span>
+                <span className="size-guide-hint">📏 True to Fit (Standard Indian/Euro sizing)</span>
               </div>
               <div className="modal-size-chips">
                 {sizes.map((sz) => (
@@ -229,7 +228,7 @@ function ProductDetailModal({
                 className="modal-customize-btn"
                 onClick={onClose}
               >
-                Customize with Player Name & Number ⚡
+                Customize with Player Name & Number (+₹150) ⚡
               </a>
             </div>
           </div>

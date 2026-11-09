@@ -14,7 +14,7 @@ function Navbar({
     { id: 'La Liga', label: 'La Liga' },
     { id: 'Serie A', label: 'Serie A' },
     { id: 'International', label: 'International' },
-    { id: 'Retro', label: 'Retro Vault' }
+    { id: 'Retro', label: 'Retro Classics' }
   ];
 
   function handleCategoryClick(e, categoryId) {
@@ -22,7 +22,6 @@ function Navbar({
     if (onSelectLeague) {
       onSelectLeague(categoryId);
     }
-    // Smooth scroll to catalog
     const catalogElement = document.getElementById('catalog');
     if (catalogElement) {
       catalogElement.scrollIntoView({ behavior: 'smooth' });
@@ -31,15 +30,15 @@ function Navbar({
 
   return (
     <header className="header-wrapper">
-      {/* 1. Top Announcement Strip */}
+      {/* 1. Top Announcement Strip (Pan-India Offer Bar) */}
       <div className="announcement-bar">
-        <p>⚡ 100% AUTHENTIC CLUB MERCHANDISE • OFFICIAL BADGES & FLOCKING • DISPATCH IN 24H</p>
+        <p>⚡ FREE PAN-INDIA DELIVERY ON ORDERS ABOVE ₹999 • 100% EMBROIDERED BADGES • COD & UPI AVAILABLE</p>
       </div>
 
       {/* 2. Main Navigation Bar */}
       <nav className="navbar">
         <div className="nav-container">
-          {/* Brand Logo with Gold Vault Pill */}
+          {/* Brand Logo */}
           <div
             className="nav-logo"
             onClick={() => onSelectLeague && onSelectLeague('all')}
@@ -52,7 +51,7 @@ function Navbar({
             </div>
           </div>
 
-          {/* Navigation Category Links (Synchronized with Catalog Filter!) */}
+          {/* Navigation Category Links */}
           <ul className="nav-links">
             {navCategories.map((cat) => (
               <li key={cat.id}>
@@ -79,7 +78,7 @@ function Navbar({
               <span className="search-icon">🔍</span>
               <input
                 type="text"
-                placeholder="Search kits, clubs, players..."
+                placeholder="Search club, player, kit..."
                 className="search-input"
               />
             </div>
@@ -92,7 +91,7 @@ function Navbar({
               title="View Saved Wishlist"
               aria-label="View Saved Wishlist"
             >
-              ❤️ <span className="util-badge">{wishlistCount}</span>
+              ❤️ <span className="util-badge wishlist-badge">{wishlistCount}</span>
             </button>
 
             {/* Cart Button */}
@@ -103,7 +102,7 @@ function Navbar({
               title="View Matchday Bag"
               aria-label="View Matchday Bag"
             >
-              🛒 Bag <span className="util-badge cart-badge">{cartCount}</span>
+              🛒 <span className="cart-text">Bag</span> <span className="util-badge cart-badge">{cartCount}</span>
             </button>
           </div>
         </div>

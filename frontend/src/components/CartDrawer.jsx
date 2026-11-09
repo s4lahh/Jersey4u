@@ -10,15 +10,15 @@ function CartDrawer({
 }) {
   if (!isOpen) return null;
 
-  // Calculate Subtotal
+  // Calculate Subtotal in INR
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  const shippingThreshold = 90.0;
+  const shippingThreshold = 999;
   const isFreeShipping = subtotal >= shippingThreshold || cartItems.length === 0;
-  const shippingCost = isFreeShipping ? 0 : 9.99;
+  const shippingCost = isFreeShipping ? 0 : 99;
   const total = subtotal + shippingCost;
   const amountNeededForFreeShipping = Math.max(0, shippingThreshold - subtotal);
 
@@ -26,7 +26,7 @@ function CartDrawer({
     <div className="drawer-overlay" onClick={onClose}>
       <aside
         className="drawer-panel"
-        onClick={(e) => e.stopPropagation() /* Prevent closing when clicking inside */}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Drawer Header */}
         <div className="drawer-header">
@@ -54,12 +54,12 @@ function CartDrawer({
           <div className="shipping-banner">
             {isFreeShipping ? (
               <p className="shipping-success">
-                🎉 <strong>FREE EXPRESS SHIPPING UNLOCKED!</strong>
+                🎉 <strong>FREE PAN-INDIA DELIVERY UNLOCKED!</strong>
               </p>
             ) : (
               <p className="shipping-info">
-                Add <strong>${amountNeededForFreeShipping.toFixed(2)}</strong> more to unlock{' '}
-                <span className="gold-text">FREE Express Dispatch</span>!
+                Add <strong>₹{amountNeededForFreeShipping}</strong> more to unlock{' '}
+                <span className="gold-text">FREE Delivery</span>!
               </p>
             )}
             <div className="shipping-progress-bar">
@@ -79,7 +79,7 @@ function CartDrawer({
             <div className="empty-cart-state">
               <span className="empty-icon">⚽</span>
               <h4>Your Matchday Bag is Empty</h4>
-              <p>Looks like you haven't picked your armor yet. Browse the Vault for official kits and retro editions!</p>
+              <p>Looks like you haven't picked your armor yet. Browse the collection for official fan & player edition kits!</p>
               <button
                 type="button"
                 className="continue-shopping-btn"
@@ -110,7 +110,7 @@ function CartDrawer({
                         Size: <strong>{item.size}</strong>
                       </span>
                       <span className="cart-item-price">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        ₹{item.price * item.quantity}
                       </span>
                     </div>
 
@@ -158,22 +158,22 @@ function CartDrawer({
             <div className="summary-breakdown">
               <div className="summary-row">
                 <span>Subtotal</span>
-                <span className="summary-val">${subtotal.toFixed(2)}</span>
+                <span className="summary-val">₹{subtotal}</span>
               </div>
               <div className="summary-row">
-                <span>Express Shipping</span>
+                <span>Pan-India Delivery</span>
                 <span className="summary-val">
                   {isFreeShipping ? (
                     <span className="free-shipping-tag">FREE</span>
                   ) : (
-                    `$${shippingCost.toFixed(2)}`
+                    `₹${shippingCost}`
                   )}
                 </span>
               </div>
               <div className="summary-divider"></div>
               <div className="summary-row summary-total">
                 <span>Total Due</span>
-                <span className="total-amount">${total.toFixed(2)}</span>
+                <span className="total-amount">₹{total}</span>
               </div>
             </div>
 
@@ -182,7 +182,7 @@ function CartDrawer({
               className="checkout-btn"
               onClick={() => {
                 alert(
-                  `🎉 Ready to Checkout!\n\nOrder Total: $${total.toFixed(2)}\n\nIn Phase 8, this button initiates our Spring Boot Razorpay Payment Gateway integration!`
+                  `🎉 Ready to Checkout!\n\nOrder Total: ₹${total}\n\nIn Phase 8, this button triggers Razorpay (UPI, GPay, PhonePe, Cards, NetBanking)!`
                 );
               }}
             >
@@ -190,8 +190,8 @@ function CartDrawer({
             </button>
 
             <div className="drawer-guarantees">
-              <span>🛡️ 100% Authentic Kits</span>
-              <span>🔒 256-Bit SSL Encrypted</span>
+              <span>🛡️ 100% Quality Guarantee</span>
+              <span>🔒 UPI / Cards / COD</span>
             </div>
           </div>
         )}

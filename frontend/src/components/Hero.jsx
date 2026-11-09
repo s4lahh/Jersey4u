@@ -9,8 +9,8 @@ function Hero({ onQuickAdd, onOpenDetails }) {
     id: 1,
     name: 'Real Madrid 2024/25 Authentic Home Kit',
     team: 'Real Madrid',
-    price: 89.99,
-    originalPrice: 109.99,
+    price: 899,
+    originalPrice: 1499,
     imageUrl: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=800&q=80',
     inStock: true
   };
@@ -22,7 +22,7 @@ function Hero({ onQuickAdd, onOpenDetails }) {
         <div className="hero-text-content">
           <div className="kicker-tag">
             <span className="kicker-icon">🏆</span>
-            <span className="kicker-text">OFFICIAL DROP // 2024/25 SEASON</span>
+            <span className="kicker-text">OFFICIAL 2024/25 SEASON DROP</span>
           </div>
 
           <h1 className="hero-title">
@@ -31,7 +31,7 @@ function Hero({ onQuickAdd, onOpenDetails }) {
           </h1>
 
           <p className="hero-subtitle">
-            Official authentic club kits, legendary European retro treasures, and bespoke player customization with authentic league badges.
+            Premium master-copy club kits, legendary European retro treasures, and bespoke player customization with official tournament badges.
           </p>
 
           <div className="hero-cta-group">
@@ -45,11 +45,11 @@ function Hero({ onQuickAdd, onOpenDetails }) {
 
           {/* Trust Strip */}
           <div className="hero-trust-strip">
-            <span className="trust-item">🛡️ 100% Authentic Kits</span>
+            <span className="trust-item">🛡️ 100% Embroidered Badges</span>
             <span className="trust-dot">•</span>
-            <span className="trust-item">🏆 Official League Badges</span>
+            <span className="trust-item">🚚 Pan-India Delivery</span>
             <span className="trust-dot">•</span>
-            <span className="trust-item">⚡ Fast Global Dispatch</span>
+            <span className="trust-item">⚡ Dispatched in 24h</span>
           </div>
         </div>
 
@@ -64,7 +64,7 @@ function Hero({ onQuickAdd, onOpenDetails }) {
               className="hero-jersey-img"
               style={{ cursor: 'pointer' }}
               onClick={() => onOpenDetails && onOpenDetails(heroJersey)}
-              title="Click to view full kit details"
+              title="Click to view kit details"
             />
 
             {/* Floating Quick-Action Glass Card */}
@@ -80,8 +80,8 @@ function Hero({ onQuickAdd, onOpenDetails }) {
                   <h4 className="glass-title">{heroJersey.name}</h4>
                 </div>
                 <div className="glass-price-box">
-                  <span className="glass-price">${heroJersey.price}</span>
-                  <span className="glass-old-price">${heroJersey.originalPrice}</span>
+                  <span className="glass-price">₹{heroJersey.price}</span>
+                  <span className="glass-old-price">₹{heroJersey.originalPrice}</span>
                 </div>
               </div>
 
@@ -102,19 +102,17 @@ function Hero({ onQuickAdd, onOpenDetails }) {
                 </div>
               </div>
 
-              <div className="glass-actions-row" style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
+              <div className="glass-actions-row">
                 <button
                   type="button"
                   className="glass-add-btn"
-                  style={{ flex: 1.4 }}
                   onClick={() => onQuickAdd && onQuickAdd(heroJersey, heroSize)}
                 >
                   + Add ({heroSize}) to Bag 🛒
                 </button>
                 <button
                   type="button"
-                  className="glass-chip"
-                  style={{ flex: 1, padding: '0.55rem', fontSize: '0.8rem', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}
+                  className="glass-details-btn"
                   onClick={() => onOpenDetails && onOpenDetails(heroJersey)}
                 >
                   Details 🔍

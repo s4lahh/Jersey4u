@@ -15,16 +15,16 @@ function JerseyCard({
     : null;
 
   function handleHeartClick(e) {
-    e.stopPropagation(); // Don't open modal when clicking heart
+    e.stopPropagation();
     if (onToggleWishlist) {
       onToggleWishlist(jersey, !isWishlisted);
     }
   }
 
   function handleQuickAdd(e) {
-    e.stopPropagation(); // Don't open modal when clicking quick add
+    e.stopPropagation();
     if (onAddToCart) {
-      onAddToCart(jersey, 'M'); // Default size M for 1-click quick add
+      onAddToCart(jersey, 'M');
     }
   }
 
@@ -62,13 +62,13 @@ function JerseyCard({
 
         {/* Custom Print Ready Ribbon */}
         <span className="card-custom-badge">
-          ✨ Custom Print Ready
+          ✨ Custom Flocking Ready
         </span>
 
         {/* Hover Overlay Hint */}
         <div className="card-hover-overlay">
           <span className="view-details-pill">
-            🔍 View Kit Details & Specs
+            🔍 Quick View & Specs
           </span>
         </div>
       </div>
@@ -80,9 +80,9 @@ function JerseyCard({
 
         <div className="card-price-row">
           <div className="price-stack">
-            <span className="card-price">${price}</span>
+            <span className="card-price">₹{price}</span>
             {originalPrice && (
-              <span className="card-old-price">${originalPrice}</span>
+              <span className="card-old-price">₹{originalPrice}</span>
             )}
           </div>
 
@@ -112,7 +112,7 @@ function JerseyCard({
               </button>
             </>
           ) : (
-            <span className="card-sold-out-banner">Sold Out</span>
+            <span className="card-sold-out-banner">Sold Out — Join Waitlist</span>
           )}
         </div>
       </div>
