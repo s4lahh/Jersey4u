@@ -3,14 +3,18 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import DiscoveryBar from './components/DiscoveryBar';
 import JerseyCard from './components/JerseyCard';
+import CartDrawer from './components/CartDrawer';
+import WishlistDrawer from './components/WishlistDrawer';
 import './App.css';
 
 function App() {
-  // 1. STATE: Cart Item Count
-  const [cartCount, setCartCount] = useState(0);
+  // 1. STATE: Cart Items List (Array of { id, name, team, price, imageUrl, size, quantity })
+  const [cartItems, setCartItems] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // 2. STATE: Wishlist Count
-  const [wishlistCount, setWishlistCount] = useState(0);
+  // 2. STATE: Wishlist Items List (Array of jersey objects)
+  const [wishlistItems, setWishlistItems] = useState([]);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
 
   // 3. STATE: Selected League Filter (defaults to 'all')
   const [selectedLeague, setSelectedLeague] = useState('all');
@@ -94,32 +98,108 @@ function App() {
     );
   });
 
-  // Handler: Add to Cart
-  function handleAddToCart(jersey, size) {
-    setCartCount((prev) => prev + 1);
+  // Derived Counts
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const wishlistCount = wishlistItems.length;
+
+  // Handler: Add to Cart (with specific size!)
+  function handleAddToCart(jersey, size = 'M') {
+    setCartItems((prevItems) => {
+      const existingIndex = prevItems.findIndex(
+        (item) => item.id === jersey.id && item.size === size
+      );
+
+      if (existingIndex > -1) {
+        const updated = [...prevItems];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          quantity: updated[existingIndex].quantity + 1
+        };
+        return updated;
+      } else {
+        return [
+          ...prevItems,
+          {
+            id: jersey.id,
+            name: jersey.name,
+            team: jersey.team,
+            price: jersey.price,
+            imageUrl: jersey.imageUrl,
+            size: size,
+            quantity: 1
+          }
+        ];
+      }
+    });
+
+    // Open Cart Drawer to show customer what they added
+    setIsCartOpen(true);
+  }
+
+  // Handler: Update Quantity in Cart
+  function handleUpdateQuantity(id, size, delta) {
+    setCartItems((prevItems) =>
+      prevItems
+        .map((item) => {
+          if (item.id === id && item.size === size) {
+            const nextQty = item.quantity + delta;
+            return nextQty > 0 ? { ...item, quantity: nextQty } : null;
+          }
+          return item;
+        })
+        .filter(Boolean)
+    );
+  }
+
+  // Handler: Remove Item from Cart
+  function handleRemoveFromCart(id, size) {
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => !(item.id === id && item.size === size))
+    );
   }
 
   // Handler: Toggle Wishlist
   function handleToggleWishlist(jersey, isNowLiked) {
-    setWishlistCount((prev) => (isNowLiked ? prev + 1 : Math.max(0, prev - 1)));
+    setWishlistItems((prevItems) => {
+      if (isNowLiked) {
+        if (!prevItems.some((item) => item.id === jersey.id)) {
+          return [...prevItems, jersey];
+        }
+        return prevItems;
+      } else {
+        return prevItems.filter((item) => item.id !== jersey.id);
+      }
+    });
+  }
+
+  // Handler: Remove from Wishlist
+  function handleRemoveWishlist(jersey) {
+    setWishlistItems((prevItems) =>
+      prevItems.filter((item) => item.id !== jersey.id)
+    );
   }
 
   return (
     <div className="app-layout">
-      {/* 1. Agreed Top Announcement & Header */}
-      <Navbar cartCount={cartCount} wishlistCount={wishlistCount} />
+      {/* 1. Header with Cart & Wishlist Drawer Triggers */}
+      <Navbar
+        cartCount={cartCount}
+        wishlistCount={wishlistCount}
+        onOpenCart={() => setIsCartOpen(true)}
+        onOpenWishlist={() => setIsWishlistOpen(true)}
+      />
 
-      {/* 2. Agreed Hero Section */}
+      {/* 2. Hero Section */}
       <Hero onQuickAdd={handleAddToCart} />
 
-      {/* 3. Agreed 2-Tier League & Club Discovery Bar */}
+      {/* 3. 2-Tier League & Club Discovery Bar */}
       <DiscoveryBar
         selectedLeague={selectedLeague}
         onSelectLeague={setSelectedLeague}
         totalCount={filteredJerseys.length}
       />
 
-      {/* 4. Agreed Product Catalog Grid */}
+      {/* 4. Product Catalog Grid */}
       <main className="catalog-wrapper" id="catalog">
         <div className="catalog-container">
           <div className="catalog-header">
@@ -137,6 +217,7 @@ function App() {
               <JerseyCard
                 key={jersey.id}
                 jersey={jersey}
+                isWishlisted={wishlistItems.some((item) => item.id === jersey.id)}
                 onAddToCart={handleAddToCart}
                 onToggleWishlist={handleToggleWishlist}
               />
@@ -155,6 +236,24 @@ function App() {
           <p className="footer-copy">© 2026 Jersey4U. Built with Spring Boot 3, MySQL 8 & React.</p>
         </div>
       </footer>
+
+      {/* 6. Slide-Over Cart Drawer */}
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartItems={cartItems}
+        onUpdateQuantity={handleUpdateQuantity}
+        onRemoveItem={handleRemoveFromCart}
+      />
+
+      {/* 7. Slide-Over Wishlist Drawer */}
+      <WishlistDrawer
+        isOpen={isWishlistOpen}
+        onClose={() => setIsWishlistOpen(false)}
+        wishlistItems={wishlistItems}
+        onRemoveWishlist={handleRemoveWishlist}
+        onMoveToCart={handleAddToCart}
+      />
     </div>
   );
 }

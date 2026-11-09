@@ -1,6 +1,11 @@
 import './Navbar.css';
 
-function Navbar({ cartCount = 0, wishlistCount = 0 }) {
+function Navbar({
+  cartCount = 0,
+  wishlistCount = 0,
+  onOpenCart,
+  onOpenWishlist
+}) {
   return (
     <header className="header-wrapper">
       {/* 1. Top Announcement Strip */}
@@ -43,13 +48,25 @@ function Navbar({ cartCount = 0, wishlistCount = 0 }) {
               />
             </div>
 
-            {/* Wishlist Icon */}
-            <button className="utility-btn wishlist-icon-btn" title="Saved Wishlist">
+            {/* Wishlist Button */}
+            <button
+              type="button"
+              className="utility-btn wishlist-icon-btn"
+              onClick={onOpenWishlist}
+              title="View Saved Wishlist"
+              aria-label="View Saved Wishlist"
+            >
               ❤️ <span className="util-badge">{wishlistCount}</span>
             </button>
 
             {/* Cart Button */}
-            <button className="utility-btn cart-btn">
+            <button
+              type="button"
+              className="utility-btn cart-btn"
+              onClick={onOpenCart}
+              title="View Matchday Bag"
+              aria-label="View Matchday Bag"
+            >
               🛒 Bag <span className="util-badge cart-badge">{cartCount}</span>
             </button>
           </div>

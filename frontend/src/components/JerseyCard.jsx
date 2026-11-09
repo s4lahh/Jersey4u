@@ -7,9 +7,6 @@ function JerseyCard({ jersey, onAddToCart, onToggleWishlist, isWishlisted = fals
   // 1. STATE: Which size is selected? (Default is 'M')
   const [selectedSize, setSelectedSize] = useState('M');
 
-  // 2. STATE: Wishlist status
-  const [liked, setLiked] = useState(isWishlisted);
-
   const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
   // Calculate discount percentage if originalPrice exists
@@ -18,10 +15,8 @@ function JerseyCard({ jersey, onAddToCart, onToggleWishlist, isWishlisted = fals
     : null;
 
   function handleHeartClick() {
-    const nextState = !liked;
-    setLiked(nextState);
     if (onToggleWishlist) {
-      onToggleWishlist(jersey, nextState);
+      onToggleWishlist(jersey, !isWishlisted);
     }
   }
 
@@ -41,9 +36,10 @@ function JerseyCard({ jersey, onAddToCart, onToggleWishlist, isWishlisted = fals
           type="button"
           className="wishlist-btn"
           onClick={handleHeartClick}
-          title={liked ? 'Remove from Wishlist' : 'Save to Wishlist'}
+          title={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
+          aria-label={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
         >
-          {liked ? '❤️' : '🤍'}
+          {isWishlisted ? '❤️' : '🤍'}
         </button>
 
         {/* Bottom-Left Customizer Ready Tag */}
