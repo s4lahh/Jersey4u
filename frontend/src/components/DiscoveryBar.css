@@ -1,0 +1,132 @@
+.discovery-bar-wrapper {
+  background: #0b0f19;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 104px;
+  z-index: 900;
+  backdrop-filter: blur(12px);
+}
+
+.discovery-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Tier 1: League Pills */
+.league-pills-row {
+  margin-bottom: 1.25rem;
+}
+
+.pills-scroll-container {
+  display: flex;
+  gap: 0.65rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none;
+}
+
+.pills-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.league-pill {
+  background: #131c31;
+  color: #94a3b8;
+  border: 1px solid #1e293b;
+  padding: 0.55rem 1.15rem;
+  border-radius: 9999px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.league-pill:hover {
+  background: #1e293b;
+  color: #ffffff;
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.league-pill.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+
+/* Tier 2: Clubs Sub-row */
+.clubs-sub-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.club-avatars {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.club-row-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 0.25rem;
+}
+
+.club-avatar-chip {
+  background: rgba(19, 28, 49, 0.6);
+  border: 1px solid #1e293b;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem 0.25rem 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.club-avatar-chip:hover {
+  border-color: #eab308;
+  transform: translateY(-1px);
+}
+
+.club-badge-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.club-chip-text {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.catalog-meta {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.count-number {
+  color: #eab308;
+  font-weight: 800;
+}

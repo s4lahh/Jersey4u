@@ -1,44 +1,134 @@
-.app {
+/* App Layout & Core Shell */
+.app-layout {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #0b0f19;
+  color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
-.main-content {
+/* 4. Product Catalog Wrapper */
+.catalog-wrapper {
   flex: 1;
-  max-width: 1200px;
-  width: 100%;
+  padding: 3rem 1.5rem 4rem;
+  background: linear-gradient(180deg, #0b0f19 0%, #0d1322 100%);
+}
+
+.catalog-container {
+  max-width: 1320px;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem;
+  width: 100%;
 }
 
-.hero-section {
-  text-align: center;
-  padding: 3rem 1rem;
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0) 100%);
-  border-radius: 1rem;
-  border: 1px solid #1e293b;
-  margin-bottom: 2.5rem;
+.catalog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.hero-section h1 {
-  font-size: 2.5rem;
+.section-kicker {
+  font-size: 0.75rem;
   font-weight: 800;
-  margin-bottom: 0.75rem;
+  letter-spacing: 1.5px;
+  color: #3b82f6;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+  display: block;
+}
+
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 900;
   color: #ffffff;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+  margin: 0;
 }
 
-.hero-section p {
-  font-size: 1.15rem;
+.results-badge {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  letter-spacing: 0.25px;
 }
 
-.highlight {
-  color: #eab308;
-}
-
+/* Catalog Product Grid */
 .jersey-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
   gap: 2rem;
+}
+
+/* 5. Minimal Vault Footer */
+.vault-footer {
+  background-color: #070b14;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 3.5rem 1.5rem 2.5rem;
+  margin-top: auto;
+}
+
+.footer-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.footer-logo {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 1.5px;
+}
+
+.footer-tagline {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #d4af37;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.footer-copy {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.6rem;
+  }
+
+  .catalog-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .jersey-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
 }
