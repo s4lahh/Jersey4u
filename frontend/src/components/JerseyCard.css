@@ -1,46 +1,54 @@
-.jersey-card {
+.vault-jersey-card {
   background-color: #0f172a;
   border: 1px solid #1e293b;
   border-radius: 0.85rem;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
+  cursor: pointer;
   position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-.jersey-card:hover {
+.vault-jersey-card:hover {
   transform: translateY(-6px);
   border-color: #3b82f6;
-  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(37, 99, 235, 0.25);
 }
 
-.jersey-image-container {
+.vault-jersey-card:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* 1. Media Area */
+.card-media-wrapper {
   position: relative;
   width: 100%;
-  height: 250px;
-  background-color: #020617;
+  height: 290px;
+  background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
   overflow: hidden;
 }
 
-.jersey-img {
+.card-jersey-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   display: block;
 }
 
-.jersey-card:hover .jersey-img {
-  transform: scale(1.07);
+.vault-jersey-card:hover .card-jersey-image {
+  transform: scale(1.08);
 }
 
-/* League Tag */
-.league-tag {
+/* League Badge */
+.card-league-pill {
   position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  background-color: rgba(11, 15, 25, 0.85);
+  top: 0.85rem;
+  left: 0.85rem;
+  background-color: rgba(11, 15, 25, 0.88);
   backdrop-filter: blur(8px);
   color: #e2e8f0;
   font-size: 0.72rem;
@@ -53,15 +61,15 @@
   z-index: 2;
 }
 
-/* Wishlist Heart Button */
-.wishlist-btn {
+/* Wishlist Button */
+.card-wishlist-toggle {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: 0.85rem;
+  right: 0.85rem;
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(11, 15, 25, 0.75);
+  background: rgba(11, 15, 25, 0.8);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   font-size: 1rem;
@@ -73,17 +81,17 @@
   z-index: 2;
 }
 
-.wishlist-btn:hover {
+.card-wishlist-toggle:hover {
   transform: scale(1.15);
   background: rgba(15, 23, 42, 0.95);
   border-color: #ef4444;
 }
 
-/* Custom Print Ready Badge */
-.custom-ready-badge {
+/* Customizer Ready Badge */
+.card-custom-badge {
   position: absolute;
-  bottom: 0.75rem;
-  left: 0.75rem;
+  bottom: 0.85rem;
+  left: 0.85rem;
   background: rgba(212, 175, 55, 0.2);
   backdrop-filter: blur(8px);
   color: #facc15;
@@ -91,167 +99,166 @@
   font-size: 0.7rem;
   font-weight: 800;
   padding: 0.2rem 0.6rem;
-  border-radius: 0.35rem;
-  letter-spacing: 0.4px;
+  border-radius: 9999px;
+  letter-spacing: 0.5px;
   z-index: 2;
 }
 
-.jersey-content {
+/* Hover Overlay */
+.card-hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 15, 25, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 1;
+}
+
+.vault-jersey-card:hover .card-hover-overlay {
+  opacity: 1;
+}
+
+.view-details-pill {
+  background: rgba(37, 99, 235, 0.9);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 0.55rem 1rem;
+  border-radius: 9999px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transform: translateY(8px);
+  transition: transform 0.25s ease;
+}
+
+.vault-jersey-card:hover .view-details-pill {
+  transform: translateY(0);
+}
+
+/* 2. Content & Meta */
+.card-meta-wrapper {
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-.team-label {
-  color: #38bdf8;
-  font-size: 0.78rem;
+.card-team-label {
+  font-size: 0.72rem;
   font-weight: 800;
-  text-transform: uppercase;
+  color: #38bdf8;
   letter-spacing: 1px;
-  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
 }
 
-.jersey-name {
+.card-product-name {
   font-size: 1.05rem;
   font-weight: 800;
   color: #ffffff;
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 0.85rem 0;
   line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   min-height: 2.7rem;
 }
 
-/* Price & Discount Row */
-.price-row {
+.card-price-row {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.current-price {
-  font-size: 1.4rem;
+.price-stack {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.card-price {
+  font-size: 1.35rem;
   font-weight: 900;
-  color: #eab308;
+  color: #facc15;
 }
 
-.original-price {
-  font-size: 0.95rem;
+.card-old-price {
+  font-size: 0.9rem;
   color: #64748b;
   text-decoration: line-through;
 }
 
-.discount-tag {
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  font-size: 0.7rem;
+.card-discount-pill {
+  font-size: 0.72rem;
   font-weight: 800;
-  padding: 0.15rem 0.45rem;
-  border-radius: 0.25rem;
-  letter-spacing: 0.5px;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
 }
 
-/* Size Selector */
-.size-selector {
-  margin-bottom: 1.25rem;
+/* 3. Bottom Actions */
+.card-bottom-actions {
+  display: flex;
+  gap: 0.6rem;
   margin-top: auto;
 }
 
-.size-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #94a3b8;
-  display: block;
-  margin-bottom: 0.35rem;
-}
-
-.size-chips {
-  display: flex;
-  gap: 0.35rem;
-}
-
-.size-chip {
-  flex: 1;
-  background: #1e293b;
-  color: #94a3b8;
-  border: 1px solid #334155;
-  border-radius: 0.375rem;
-  padding: 0.35rem 0;
-  font-size: 0.8rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.size-chip:hover {
-  border-color: #64748b;
-  color: #ffffff;
-}
-
-.size-chip.active {
+.card-quick-add-btn {
+  flex: 1.3;
   background: #2563eb;
   color: #ffffff;
-  border-color: #3b82f6;
-  box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
-}
-
-/* Dual Action Buttons Row */
-.card-actions-row {
-  display: grid;
-  grid-template-columns: 1.45fr 1fr;
-  gap: 0.5rem;
-}
-
-.card-btn-primary {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #ffffff;
   border: none;
-  padding: 0.7rem 0.6rem;
   border-radius: 0.5rem;
-  font-size: 0.88rem;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.82rem;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 
-.card-btn-primary:hover {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  transform: translateY(-1px);
+.card-quick-add-btn:hover {
+  background: #3b82f6;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
 }
 
-.card-btn-customize {
-  background: rgba(212, 175, 55, 0.12);
-  color: #facc15;
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.7rem 0.5rem;
+.card-explore-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
   border-radius: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 800;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.card-btn-customize:hover {
-  background: rgba(212, 175, 55, 0.25);
-  border-color: #facc15;
-  transform: translateY(-1px);
-}
-
-.card-btn-disabled {
-  width: 100%;
-  background: #1e293b;
-  color: #64748b;
-  border: 1px solid #334155;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  cursor: not-allowed;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.card-explore-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.card-sold-out-banner {
+  width: 100%;
+  text-align: center;
+  padding: 0.65rem;
+  background: rgba(51, 65, 85, 0.4);
+  color: #94a3b8;
+  border-radius: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
 }

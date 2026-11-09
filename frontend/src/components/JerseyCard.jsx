@@ -1,40 +1,58 @@
-import { useState } from 'react';
 import './JerseyCard.css';
 
-function JerseyCard({ jersey, onAddToCart, onToggleWishlist, isWishlisted = false }) {
+function JerseyCard({
+  jersey,
+  onOpenDetails,
+  onAddToCart,
+  onToggleWishlist,
+  isWishlisted = false
+}) {
   const { id, name, team, league, season = '24/25', price, originalPrice, imageUrl, inStock } = jersey;
 
-  // 1. STATE: Which size is selected? (Default is 'M')
-  const [selectedSize, setSelectedSize] = useState('M');
-
-  const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
-
-  // Calculate discount percentage if originalPrice exists
+  // Calculate discount percentage
   const discountPercentage = originalPrice
     ? Math.round(((originalPrice - price) / originalPrice) * 100)
     : null;
 
-  function handleHeartClick() {
+  function handleHeartClick(e) {
+    e.stopPropagation(); // Don't open modal when clicking heart
     if (onToggleWishlist) {
       onToggleWishlist(jersey, !isWishlisted);
     }
   }
 
-  return (
-    <div className="jersey-card">
-      {/* 1. Image Container with Badges */}
-      <div className="jersey-image-container">
-        <img src={imageUrl} alt={name} className="jersey-img" />
+  function handleQuickAdd(e) {
+    e.stopPropagation(); // Don't open modal when clicking quick add
+    if (onAddToCart) {
+      onAddToCart(jersey, 'M'); // Default size M for 1-click quick add
+    }
+  }
 
-        {/* Top-Left League & Season Tag */}
-        <span className="league-tag">
+  return (
+    <article
+      className={`vault-jersey-card ${inStock === false ? 'sold-out' : ''}`}
+      onClick={() => onOpenDetails && onOpenDetails(jersey)}
+      title={`Click to view details for ${name}`}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onOpenDetails && onOpenDetails(jersey);
+        }
+      }}
+    >
+      {/* 1. Large Image Showcase with Badges */}
+      <div className="card-media-wrapper">
+        <img src={imageUrl} alt={name} className="card-jersey-image" />
+
+        {/* Top-Left League & Season Badge */}
+        <span className="card-league-pill">
           {league} • {season}
         </span>
 
-        {/* Top-Right Floating Wishlist Heart */}
+        {/* Top-Right Wishlist Heart */}
         <button
           type="button"
-          className="wishlist-btn"
+          className={`card-wishlist-toggle ${isWishlisted ? 'liked' : ''}`}
           onClick={handleHeartClick}
           title={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
           aria-label={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
@@ -42,66 +60,63 @@ function JerseyCard({ jersey, onAddToCart, onToggleWishlist, isWishlisted = fals
           {isWishlisted ? '❤️' : '🤍'}
         </button>
 
-        {/* Bottom-Left Customizer Ready Tag */}
-        <span className="custom-ready-badge">
+        {/* Custom Print Ready Ribbon */}
+        <span className="card-custom-badge">
           ✨ Custom Print Ready
         </span>
+
+        {/* Hover Overlay Hint */}
+        <div className="card-hover-overlay">
+          <span className="view-details-pill">
+            🔍 View Kit Details & Specs
+          </span>
+        </div>
       </div>
 
-      {/* 2. Product Information */}
-      <div className="jersey-content">
-        <span className="team-label">{team}</span>
-        <h3 className="jersey-name" title={name}>{name}</h3>
+      {/* 2. Content & Pricing */}
+      <div className="card-meta-wrapper">
+        <span className="card-team-label">{team}</span>
+        <h3 className="card-product-name">{name}</h3>
 
-        {/* Price Row with Discount Tag */}
-        <div className="price-row">
-          <span className="current-price">${price}</span>
-          {originalPrice && (
-            <span className="original-price">${originalPrice}</span>
-          )}
+        <div className="card-price-row">
+          <div className="price-stack">
+            <span className="card-price">${price}</span>
+            {originalPrice && (
+              <span className="card-old-price">${originalPrice}</span>
+            )}
+          </div>
+
           {discountPercentage && (
-            <span className="discount-tag">SAVE {discountPercentage}%</span>
+            <span className="card-discount-pill">SAVE {discountPercentage}%</span>
           )}
         </div>
 
-        {/* Interactive Size Chips */}
-        <div className="size-selector">
-          <span className="size-label">Select Size:</span>
-          <div className="size-chips">
-            {sizes.map((size) => (
+        {/* 3. Action Row */}
+        <div className="card-bottom-actions">
+          {inStock !== false ? (
+            <>
               <button
-                key={size}
                 type="button"
-                className={`size-chip ${selectedSize === size ? 'active' : ''}`}
-                onClick={() => setSelectedSize(size)}
+                className="card-quick-add-btn"
+                onClick={handleQuickAdd}
+                title="Quick add size M to bag"
               >
-                {size}
+                + Quick Add (M) 🛒
               </button>
-            ))}
-          </div>
+              <button
+                type="button"
+                className="card-explore-btn"
+                onClick={() => onOpenDetails && onOpenDetails(jersey)}
+              >
+                Details →
+              </button>
+            </>
+          ) : (
+            <span className="card-sold-out-banner">Sold Out</span>
+          )}
         </div>
-
-        {/* Dual Action Buttons (Add to Bag + Customize) */}
-        {inStock ? (
-          <div className="card-actions-row">
-            <button
-              type="button"
-              className="card-btn-primary"
-              onClick={() => onAddToCart && onAddToCart(jersey, selectedSize)}
-            >
-              Add to Bag ({selectedSize}) 🛒
-            </button>
-            <a href="#customizer" className="card-btn-customize" title="Personalize Name & Number">
-              Customize ⚡
-            </a>
-          </div>
-        ) : (
-          <button type="button" className="card-btn-disabled" disabled>
-            Sold Out — Notify Me 🔔
-          </button>
-        )}
       </div>
-    </div>
+    </article>
   );
 }
 

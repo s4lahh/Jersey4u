@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import './Hero.css';
 
-function Hero({ onQuickAdd }) {
+function Hero({ onQuickAdd, onOpenDetails }) {
   const [heroSize, setHeroSize] = useState('L');
   const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
   const heroJersey = {
-    name: 'Real Madrid 2024/25 Authentic Home',
+    id: 1,
+    name: 'Real Madrid 2024/25 Authentic Home Kit',
     team: 'Real Madrid',
     price: 89.99,
     originalPrice: 109.99,
@@ -61,11 +62,19 @@ function Hero({ onQuickAdd }) {
               src={heroJersey.imageUrl}
               alt={heroJersey.name}
               className="hero-jersey-img"
+              style={{ cursor: 'pointer' }}
+              onClick={() => onOpenDetails && onOpenDetails(heroJersey)}
+              title="Click to view full kit details"
             />
 
             {/* Floating Quick-Action Glass Card */}
             <div className="hero-glass-card">
-              <div className="glass-card-header">
+              <div
+                className="glass-card-header"
+                style={{ cursor: 'pointer' }}
+                onClick={() => onOpenDetails && onOpenDetails(heroJersey)}
+                title="Click to view kit details"
+              >
                 <div>
                   <span className="glass-team">{heroJersey.team}</span>
                   <h4 className="glass-title">{heroJersey.name}</h4>
@@ -93,13 +102,24 @@ function Hero({ onQuickAdd }) {
                 </div>
               </div>
 
-              <button
-                type="button"
-                className="glass-add-btn"
-                onClick={() => onQuickAdd && onQuickAdd(heroJersey, heroSize)}
-              >
-                + Quick Add ({heroSize}) to Bag
-              </button>
+              <div className="glass-actions-row" style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
+                <button
+                  type="button"
+                  className="glass-add-btn"
+                  style={{ flex: 1.4 }}
+                  onClick={() => onQuickAdd && onQuickAdd(heroJersey, heroSize)}
+                >
+                  + Add ({heroSize}) to Bag 🛒
+                </button>
+                <button
+                  type="button"
+                  className="glass-chip"
+                  style={{ flex: 1, padding: '0.55rem', fontSize: '0.8rem', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}
+                  onClick={() => onOpenDetails && onOpenDetails(heroJersey)}
+                >
+                  Details 🔍
+                </button>
+              </div>
             </div>
           </div>
         </div>

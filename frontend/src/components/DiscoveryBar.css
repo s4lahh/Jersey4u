@@ -1,11 +1,9 @@
 .discovery-bar-wrapper {
   background: #0b0f19;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 1.5rem 0;
-  position: sticky;
-  top: 104px;
-  z-index: 900;
-  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.75rem 0 1.25rem;
+  /* Removed sticky positioning - it now scrolls naturally with the page */
+  position: relative;
 }
 
 .discovery-container {
@@ -23,7 +21,7 @@
   display: flex;
   gap: 0.65rem;
   overflow-x: auto;
-  padding-bottom: 0.25rem;
+  padding-bottom: 0.35rem;
   scrollbar-width: none;
 }
 

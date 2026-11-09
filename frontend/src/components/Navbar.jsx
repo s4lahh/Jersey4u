@@ -3,9 +3,32 @@ import './Navbar.css';
 function Navbar({
   cartCount = 0,
   wishlistCount = 0,
+  selectedLeague = 'all',
+  onSelectLeague,
   onOpenCart,
   onOpenWishlist
 }) {
+  const navCategories = [
+    { id: 'all', label: 'All Kits' },
+    { id: 'Premier League', label: 'Premier League' },
+    { id: 'La Liga', label: 'La Liga' },
+    { id: 'Serie A', label: 'Serie A' },
+    { id: 'International', label: 'International' },
+    { id: 'Retro', label: 'Retro Vault' }
+  ];
+
+  function handleCategoryClick(e, categoryId) {
+    e.preventDefault();
+    if (onSelectLeague) {
+      onSelectLeague(categoryId);
+    }
+    // Smooth scroll to catalog
+    const catalogElement = document.getElementById('catalog');
+    if (catalogElement) {
+      catalogElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
   return (
     <header className="header-wrapper">
       {/* 1. Top Announcement Strip */}
@@ -17,7 +40,11 @@ function Navbar({
       <nav className="navbar">
         <div className="nav-container">
           {/* Brand Logo with Gold Vault Pill */}
-          <div className="nav-logo">
+          <div
+            className="nav-logo"
+            onClick={() => onSelectLeague && onSelectLeague('all')}
+            title="Jersey4U Home"
+          >
             <span className="logo-icon">⚽</span>
             <div className="logo-brand">
               <span className="brand-name">JERSEY4U</span>
@@ -25,15 +52,24 @@ function Navbar({
             </div>
           </div>
 
-          {/* Navigation Category Links */}
+          {/* Navigation Category Links (Synchronized with Catalog Filter!) */}
           <ul className="nav-links">
-            <li><a href="#all" className="active">All Kits</a></li>
-            <li><a href="#new">New Season 24/25</a></li>
-            <li><a href="#premierleague">Premier League</a></li>
-            <li><a href="#laliga">La Liga</a></li>
-            <li><a href="#seriea">Serie A</a></li>
-            <li><a href="#retro">Retro Vault</a></li>
-            <li><a href="#customizer" className="customizer-link">Customizer ⚙️</a></li>
+            {navCategories.map((cat) => (
+              <li key={cat.id}>
+                <a
+                  href={`#${cat.id}`}
+                  className={selectedLeague.toLowerCase() === cat.id.toLowerCase() ? 'active' : ''}
+                  onClick={(e) => handleCategoryClick(e, cat.id)}
+                >
+                  {cat.label}
+                </a>
+              </li>
+            ))}
+            <li>
+              <a href="#customizer" className="customizer-link">
+                Customizer ⚙️
+              </a>
+            </li>
           </ul>
 
           {/* Right Utility Bar: Search, Wishlist, Cart */}

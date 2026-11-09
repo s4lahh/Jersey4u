@@ -3,23 +3,27 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import DiscoveryBar from './components/DiscoveryBar';
 import JerseyCard from './components/JerseyCard';
+import ProductDetailModal from './components/ProductDetailModal';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
 import './App.css';
 
 function App() {
-  // 1. STATE: Cart Items List (Array of { id, name, team, price, imageUrl, size, quantity })
+  // 1. STATE: Cart Items List
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // 2. STATE: Wishlist Items List (Array of jersey objects)
+  // 2. STATE: Wishlist Items List
   const [wishlistItems, setWishlistItems] = useState([]);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
 
-  // 3. STATE: Selected League Filter (defaults to 'all')
+  // 3. STATE: Selected League / Club Filter
   const [selectedLeague, setSelectedLeague] = useState('all');
 
-  // Master Catalog of Football Kits
+  // 4. STATE: Active Product Detail Modal
+  const [activeJerseyDetail, setActiveJerseyDetail] = useState(null);
+
+  // Master Curated Catalog of Football Kits with Full Descriptions & Specs
   const allJerseys = [
     {
       id: 1,
@@ -29,8 +33,17 @@ function App() {
       season: '24/25',
       price: 89.99,
       originalPrice: 109.99,
-      imageUrl: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=600&q=80',
-      inStock: true
+      imageUrl: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=800&q=80',
+      inStock: true,
+      description:
+        "The official 2024/25 Real Madrid Home Jersey honors the club's eternal elegance and unmatched European dominance. Crafted with an exclusive houndstooth texture inspired by traditional 'chulapo' attire from Madrid's annual San Isidro Fiesta, this kit embodies pure royal Madridismo.",
+      features: [
+        'Official Authentic matchday player edition',
+        'HEAT.RDY cooling fabric technology with engineered mesh ventilation',
+        'Metallic gold Real Madrid heat-applied crest and embroidered accents',
+        'Official LALIGA EA SPORTS sleeve badge included',
+        '100% Recycled polyester double-knit performance fabric'
+      ]
     },
     {
       id: 2,
@@ -40,8 +53,17 @@ function App() {
       season: '24/25',
       price: 89.99,
       originalPrice: 109.99,
-      imageUrl: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=600&q=80',
-      inStock: true
+      imageUrl: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80',
+      inStock: true,
+      description:
+        "Commemorating 125 years of Blaugrana glory (1899–2024). Features the iconic half-and-half design inspired by the club's very first kit worn by Joan Gamper, accented with commemorative gold anniversary crest detailing and Catalan Senyera pride.",
+      features: [
+        '125th Anniversary official commemorative edition',
+        'Dri-FIT ADV advanced sweat-wicking match fabric',
+        'Special edition central 125-year gold-trimmed crest',
+        'Catalan Senyera flag detailing on the upper back neck',
+        'Official Spotify and Ambilight TV match sponsors'
+      ]
     },
     {
       id: 3,
@@ -51,8 +73,17 @@ function App() {
       season: '24/25',
       price: 84.99,
       originalPrice: 99.99,
-      imageUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80',
-      inStock: true
+      imageUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+      inStock: true,
+      description:
+        "Inspired by Manchester's iconic '0161' telephone dial code, woven directly into the collar and cuffs as a tribute to City's roots and unstoppable Treble-winning era under Pep Guardiola.",
+      features: [
+        'Authentic ULTRAWEAVE 4-way stretch match performance jersey',
+        '0161 Manchester area code graffiti pattern knitted into collar and trims',
+        'Official Premier League Champions gold sleeve badge',
+        'dryCELL moisture management technology',
+        'Tailored athletic aerodynamic silhouette'
+      ]
     },
     {
       id: 4,
@@ -62,8 +93,17 @@ function App() {
       season: '24/25',
       price: 84.99,
       originalPrice: 99.99,
-      imageUrl: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=600&q=80',
-      inStock: false // Out of stock to demonstrate disabled state
+      imageUrl: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80',
+      inStock: false,
+      description:
+        "For the first time in 35 years, the standalone historic Arsenal Cannon takes center stage across the red and white chest, honoring the club's defensive legacy and Highbury tradition.",
+      features: [
+        'Historic standalone Cannon crest replacing the standard shield badge',
+        'HEAT.RDY breathable lightweight match performance weave',
+        'Navy blue side piping inspired by the iconic 1997/98 double-winning squad',
+        'Official Premier League matchday lettering font ready',
+        '100% Recycled polyester mesh'
+      ]
     },
     {
       id: 5,
@@ -73,8 +113,17 @@ function App() {
       season: '2024',
       price: 94.99,
       originalPrice: 119.99,
-      imageUrl: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=600&q=80',
-      inStock: true
+      imageUrl: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80',
+      inStock: true,
+      description:
+        'The jersey of champions. Featuring classic sky-blue and white vertical stripes emblazoned with the three golden stars and the official FIFA World Champions golden chest badge.',
+      features: [
+        'Official 3-Star FIFA World Champions edition',
+        'Gold FIFA World Cup Champions center crest',
+        'AFA crest with metallic gold trim and sun of May icon',
+        'Engineered jacquard airflow mesh for optimum performance in match heat',
+        'Official Messi #10 flocking configuration ready'
+      ]
     },
     {
       id: 6,
@@ -84,12 +133,21 @@ function App() {
       season: '06/07',
       price: 79.99,
       originalPrice: 95.00,
-      imageUrl: 'https://images.unsplash.com/photo-1511886929837-354d827aae26?auto=format&fit=crop&w=600&q=80',
-      inStock: true
+      imageUrl: 'https://images.unsplash.com/photo-1511886929837-354d827aae26?auto=format&fit=crop&w=800&q=80',
+      inStock: true,
+      description:
+        "The iconic all-white 'Maglia Fortunata' lucky kit worn by Kaká, Inzaghi, and Maldini in Athens to lift the 2007 UEFA Champions League trophy against Liverpool.",
+      features: [
+        'Faithful archival reproduction of the Athens 2007 UCL Final jersey',
+        'Embroidered AC Milan crest with 7-time Champions League trophy badge on sleeve',
+        'Classic Bwin flocking on chest',
+        'Breathable vintage polyester knit with retro collar and button placket',
+        'The definitive collector piece for Rossoneri purists'
+      ]
     }
   ];
 
-  // Filtering jerseys by selected league or club
+  // Client-side filtering by league or club name
   const filteredJerseys = allJerseys.filter((jersey) => {
     if (selectedLeague === 'all') return true;
     return (
@@ -98,11 +156,11 @@ function App() {
     );
   });
 
-  // Derived Counts
+  // Derived totals
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const wishlistCount = wishlistItems.length;
 
-  // Handler: Add to Cart (with specific size!)
+  // Handler: Add to Cart (with specific size and quantity)
   function handleAddToCart(jersey, size = 'M') {
     setCartItems((prevItems) => {
       const existingIndex = prevItems.findIndex(
@@ -132,7 +190,7 @@ function App() {
       }
     });
 
-    // Open Cart Drawer to show customer what they added
+    // Auto-open Cart Drawer
     setIsCartOpen(true);
   }
 
@@ -181,18 +239,26 @@ function App() {
 
   return (
     <div className="app-layout">
-      {/* 1. Header with Cart & Wishlist Drawer Triggers */}
+      {/* 1. Header with Connected Navigation & Triggers */}
       <Navbar
         cartCount={cartCount}
         wishlistCount={wishlistCount}
+        selectedLeague={selectedLeague}
+        onSelectLeague={setSelectedLeague}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenWishlist={() => setIsWishlistOpen(true)}
       />
 
       {/* 2. Hero Section */}
-      <Hero onQuickAdd={handleAddToCart} />
+      <Hero
+        onQuickAdd={handleAddToCart}
+        onOpenDetails={(heroKit) => {
+          const match = allJerseys.find((j) => j.team === 'Real Madrid') || allJerseys[0];
+          setActiveJerseyDetail(match);
+        }}
+      />
 
-      {/* 3. 2-Tier League & Club Discovery Bar */}
+      {/* 3. Sleek Non-Sticky Discovery Bar */}
       <DiscoveryBar
         selectedLeague={selectedLeague}
         onSelectLeague={setSelectedLeague}
@@ -218,6 +284,7 @@ function App() {
                 key={jersey.id}
                 jersey={jersey}
                 isWishlisted={wishlistItems.some((item) => item.id === jersey.id)}
+                onOpenDetails={(selected) => setActiveJerseyDetail(selected)}
                 onAddToCart={handleAddToCart}
                 onToggleWishlist={handleToggleWishlist}
               />
@@ -237,7 +304,20 @@ function App() {
         </div>
       </footer>
 
-      {/* 6. Slide-Over Cart Drawer */}
+      {/* 6. Product Detail Modal (Single Card Open & Description View) */}
+      <ProductDetailModal
+        jersey={activeJerseyDetail}
+        onClose={() => setActiveJerseyDetail(null)}
+        onAddToCart={handleAddToCart}
+        onToggleWishlist={handleToggleWishlist}
+        isWishlisted={
+          activeJerseyDetail
+            ? wishlistItems.some((item) => item.id === activeJerseyDetail.id)
+            : false
+        }
+      />
+
+      {/* 7. Slide-Over Cart Drawer */}
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -246,7 +326,7 @@ function App() {
         onRemoveItem={handleRemoveFromCart}
       />
 
-      {/* 7. Slide-Over Wishlist Drawer */}
+      {/* 8. Slide-Over Wishlist Drawer */}
       <WishlistDrawer
         isOpen={isWishlistOpen}
         onClose={() => setIsWishlistOpen(false)}
