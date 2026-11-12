@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<CustomerOrder, Long> {
 
     Optional<CustomerOrder> findByOrderCode(String orderCode);
+
+    Optional<CustomerOrder> findByRazorpayOrderId(String razorpayOrderId);
 }

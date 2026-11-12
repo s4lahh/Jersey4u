@@ -130,7 +130,7 @@
 
 .payment-methods-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.65rem;
 }
 
@@ -409,6 +409,12 @@
   font-weight: 800;
   color: #0f172a;
   font-family: monospace;
+}
+
+.receipt-rzp-id {
+  font-size: 0.74rem;
+  color: #475569;
+  margin-top: 0.25rem;
 }
 
 .receipt-status-group {

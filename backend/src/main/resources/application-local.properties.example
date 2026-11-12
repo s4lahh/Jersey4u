@@ -1,0 +1,6 @@
+# Copy this file to "application-local.properties" in the same folder
+# (or in backend/) and paste your Razorpay Test Mode keys.
+# application-local.properties is ignored by Git so your secret stays safe.
+
+razorpay.key-id=rzp_test_REPLACE_WITH_YOUR_KEY_ID
+razorpay.key-secret=REPLACE_WITH_YOUR_KEY_SECRET

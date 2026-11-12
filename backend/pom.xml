@@ -41,6 +41,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Razorpay Java SDK (Orders API + HMAC-SHA256 Signature Verification) -->
+        <dependency>
+            <groupId>com.razorpay</groupId>
+            <artifactId>razorpay-java</artifactId>
+            <version>1.4.10</version>
+        </dependency>
+
         <!-- Spring Boot Test Starter (JUnit 5, Mockito) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

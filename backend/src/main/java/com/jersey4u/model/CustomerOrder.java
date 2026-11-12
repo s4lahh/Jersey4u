@@ -55,6 +55,16 @@ public class CustomerOrder {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(length = 80)
+    private String razorpayOrderId;
+
+    @Column(length = 80)
+    private String razorpayPaymentId;
+
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    @Column(length = 200)
+    private String razorpaySignature;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
@@ -192,5 +202,29 @@ public class CustomerOrder {
 
     public void setItems(List<OrderItem> items) {
         this.items = items;
+    }
+
+    public String getRazorpayOrderId() {
+        return razorpayOrderId;
+    }
+
+    public void setRazorpayOrderId(String razorpayOrderId) {
+        this.razorpayOrderId = razorpayOrderId;
+    }
+
+    public String getRazorpayPaymentId() {
+        return razorpayPaymentId;
+    }
+
+    public void setRazorpayPaymentId(String razorpayPaymentId) {
+        this.razorpayPaymentId = razorpayPaymentId;
+    }
+
+    public String getRazorpaySignature() {
+        return razorpaySignature;
+    }
+
+    public void setRazorpaySignature(String razorpaySignature) {
+        this.razorpaySignature = razorpaySignature;
     }
 }

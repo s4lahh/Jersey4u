@@ -14,8 +14,7 @@ function CheckoutModal({
   const [shippingAddress, setShippingAddress] = useState('');
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('UPI'); // 'UPI' | 'CARD' | 'COD'
-  const [upiId, setUpiId] = useState('fan@okaxis');
+  const [paymentMethod, setPaymentMethod] = useState('RAZORPAY'); // 'RAZORPAY' | 'COD'
 
   // Submission & Confirmation State
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,6 +42,55 @@ function CheckoutModal({
     onClose();
   }
 
+  function buildOrderPayload(method) {
+    return {
+      customerName: customerName.trim(),
+      customerPhone: customerPhone.trim(),
+      customerEmail: customerEmail.trim(),
+      shippingAddress: shippingAddress.trim(),
+      city: city.trim(),
+      pincode: pincode.trim(),
+      paymentMethod: method,
+      items: cartItems.map((item) => ({
+        jerseyId: item.id,
+        size: item.size,
+        quantity: item.quantity,
+        customName: item.customName || '',
+        customNumber: item.customNumber || '',
+        fontFinish: item.fontFinish || 'standard',
+        sleevePatch: item.sleevePatch || 'none'
+      }))
+    };
+  }
+
+  async function verifyRazorpayOnServer(rzpResponse) {
+    try {
+      const verifyRes = await fetch('http://localhost:8081/api/orders/razorpay/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          razorpayOrderId: rzpResponse.razorpay_order_id,
+          razorpayPaymentId: rzpResponse.razorpay_payment_id,
+          razorpaySignature: rzpResponse.razorpay_signature
+        })
+      });
+
+      const verifiedOrder = await verifyRes.json();
+      if (!verifyRes.ok) {
+        throw new Error(verifiedOrder.message || 'Payment verification failed on server.');
+      }
+
+      setConfirmedOrder(verifiedOrder);
+      if (onOrderSuccess) {
+        onOrderSuccess(verifiedOrder);
+      }
+    } catch (err) {
+      setSubmitError(err.message || 'Could not verify payment with backend.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   async function handleSubmitOrder(e) {
     e.preventDefault();
     setSubmitError('');
@@ -64,56 +112,87 @@ function CheckoutModal({
       setSubmitError('Please enter a valid 6-digit PIN code (e.g., 400001).');
       return;
     }
-    if (paymentMethod === 'UPI' && !upiId.includes('@')) {
-      setSubmitError('Please enter a valid UPI ID (e.g., name@okaxis or name@ybl).');
-      return;
-    }
 
-    const payload = {
-      customerName: customerName.trim(),
-      customerPhone: customerPhone.trim(),
-      customerEmail: customerEmail.trim(),
-      shippingAddress: shippingAddress.trim(),
-      city: city.trim(),
-      pincode: pincode.trim(),
-      paymentMethod,
-      items: cartItems.map((item) => ({
-        jerseyId: item.id,
-        size: item.size,
-        quantity: item.quantity,
-        customName: item.customName || '',
-        customNumber: item.customNumber || '',
-        fontFinish: item.fontFinish || 'standard',
-        sleevePatch: item.sleevePatch || 'none'
-      }))
-    };
+    const payload = buildOrderPayload(paymentMethod);
 
     try {
       setIsSubmitting(true);
-      const response = await fetch('http://localhost:8081/api/orders', {
+
+      if (paymentMethod === 'COD') {
+        // Direct Cash on Delivery Flow
+        const response = await fetch('http://localhost:8081/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || `Order rejected with status ${response.status}`);
+        }
+        setConfirmedOrder(data);
+        if (onOrderSuccess) onOrderSuccess(data);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Razorpay Step 1: Create Razorpay Order on Spring Boot Backend (amount in Paise)
+      if (!window.Razorpay) {
+        throw new Error(
+          'Razorpay SDK failed to load. Please check your internet connection and refresh.'
+        );
+      }
+
+      const createRes = await fetch('http://localhost:8081/api/orders/razorpay/create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || `Order rejected with status ${response.status}`);
+      const rzpOrderData = await createRes.json();
+      if (!createRes.ok) {
+        throw new Error(rzpOrderData.message || 'Could not initiate Razorpay order.');
       }
 
-      setConfirmedOrder(data);
-      if (onOrderSuccess) {
-        onOrderSuccess(data);
-      }
+      // Razorpay Step 2: Launch Official Razorpay Checkout Popup
+      const options = {
+        key: rzpOrderData.keyId,
+        amount: rzpOrderData.amountInPaise,
+        currency: rzpOrderData.currency,
+        name: 'Jersey4U — The Football Vault',
+        description: `Matchday Order ${rzpOrderData.orderCode}`,
+        order_id: rzpOrderData.razorpayOrderId,
+        prefill: {
+          name: rzpOrderData.customerName,
+          email: rzpOrderData.customerEmail || 'customer@jersey4u.in',
+          contact: rzpOrderData.customerPhone
+        },
+        theme: {
+          color: '#0f172a'
+        },
+        handler: async function (rzpResponse) {
+          // Razorpay Step 3: Verify HMAC-SHA256 signature on Spring Boot
+          await verifyRazorpayOnServer(rzpResponse);
+        },
+        modal: {
+          ondismiss: function () {
+            setIsSubmitting(false);
+            setSubmitError('Payment popup closed before completion. You can try again anytime.');
+          }
+        }
+      };
+
+      const razorpayPopup = new window.Razorpay(options);
+      razorpayPopup.on('payment.failed', function (failure) {
+        setIsSubmitting(false);
+        setSubmitError(
+          failure.error?.description || 'Payment failed in Razorpay Test Mode. Please try again.'
+        );
+      });
+      razorpayPopup.open();
     } catch (err) {
+      setIsSubmitting(false);
       setSubmitError(
         err.message || 'Could not reach Spring Boot backend on port 8081. Please try again.'
       );
-    } finally {
-      setIsSubmitting(false);
     }
   }
 
@@ -133,7 +212,7 @@ function CheckoutModal({
           /* ORDER CONFIRMED RECEIPT VIEW */
           <div className="order-success-view">
             <div className="success-check-circle">✓</div>
-            <span className="success-kicker">SAVED TO MYSQL VAULT</span>
+            <span className="success-kicker">VERIFIED &amp; SAVED TO MYSQL VAULT</span>
             <h2 className="success-title">Order Confirmed!</h2>
             <p className="success-subtitle">
               Thank you, <strong>{confirmedOrder.customerName}</strong>! Your official matchday kits
@@ -145,6 +224,11 @@ function CheckoutModal({
                 <div>
                   <span className="receipt-label">ORDER REFERENCE</span>
                   <div className="receipt-code">{confirmedOrder.orderCode}</div>
+                  {confirmedOrder.razorpayPaymentId && (
+                    <div className="receipt-rzp-id">
+                      Razorpay Payment ID: <code>{confirmedOrder.razorpayPaymentId}</code>
+                    </div>
+                  )}
                 </div>
                 <div className="receipt-status-group">
                   <span className="receipt-badge verified">{confirmedOrder.orderStatus}</span>
@@ -224,7 +308,7 @@ function CheckoutModal({
           <div className="checkout-layout">
             <div className="checkout-form-column">
               <div className="checkout-header">
-                <span className="checkout-kicker">SECURE INDIA CHECKOUT</span>
+                <span className="checkout-kicker">RAZORPAY TEST MODE CHECKOUT</span>
                 <h2 className="checkout-title">Shipping &amp; Payment</h2>
               </div>
 
@@ -320,22 +404,12 @@ function CheckoutModal({
                   <div className="payment-methods-grid">
                     <button
                       type="button"
-                      className={`payment-option-card ${paymentMethod === 'UPI' ? 'active' : ''}`}
-                      onClick={() => setPaymentMethod('UPI')}
+                      className={`payment-option-card ${paymentMethod === 'RAZORPAY' ? 'active' : ''}`}
+                      onClick={() => setPaymentMethod('RAZORPAY')}
                     >
-                      <span className="pay-icon">📱</span>
-                      <span className="pay-title">UPI / Instant</span>
-                      <span className="pay-sub">GPay • PhonePe</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      className={`payment-option-card ${paymentMethod === 'CARD' ? 'active' : ''}`}
-                      onClick={() => setPaymentMethod('CARD')}
-                    >
-                      <span className="pay-icon">💳</span>
-                      <span className="pay-title">Card</span>
-                      <span className="pay-sub">Visa • RuPay</span>
+                      <span className="pay-icon">⚡</span>
+                      <span className="pay-title">Razorpay Online</span>
+                      <span className="pay-sub">UPI • GPay • Cards • NetBanking</span>
                     </button>
 
                     <button
@@ -345,27 +419,15 @@ function CheckoutModal({
                     >
                       <span className="pay-icon">📦</span>
                       <span className="pay-title">Cash on Delivery</span>
-                      <span className="pay-sub">Pay at doorstep</span>
+                      <span className="pay-sub">Pay ₹ at your doorstep</span>
                     </button>
                   </div>
 
-                  {paymentMethod === 'UPI' && (
-                    <div className="upi-box">
-                      <label htmlFor="chk-upi">Enter UPI ID (Simulated Razorpay UPI Flow)</label>
-                      <input
-                        id="chk-upi"
-                        type="text"
-                        value={upiId}
-                        onChange={(e) => setUpiId(e.target.value)}
-                        placeholder="username@okaxis"
-                      />
-                    </div>
-                  )}
-
-                  {paymentMethod === 'CARD' && (
+                  {paymentMethod === 'RAZORPAY' && (
                     <div className="upi-box">
                       <span className="sim-note">
-                        🔒 Simulated Razorpay Test Card Mode — No real money is charged.
+                        🔒 Opens the official Razorpay Test Mode popup with HMAC-SHA256 backend
+                        signature verification (zero real money charged).
                       </span>
                     </div>
                   )}
@@ -425,14 +487,14 @@ function CheckoutModal({
                 disabled={isSubmitting || cartItems.length === 0}
               >
                 {isSubmitting
-                  ? 'VERIFYING & SAVING ORDER...'
+                  ? 'CONNECTING TO RAZORPAY...'
                   : paymentMethod === 'COD'
                   ? `CONFIRM COD ORDER • ₹${total}`
-                  : `PAY ₹${total} & PLACE ORDER ⚡`}
+                  : `PAY ₹${total} WITH RAZORPAY ⚡`}
               </button>
 
               <p className="checkout-security-note">
-                🛡️ Spring Boot recalculates verified database prices in MySQL on submission.
+                🛡️ Prices are recalculated in paise from MySQL &amp; verified via HMAC-SHA256.
               </p>
             </div>
           </div>

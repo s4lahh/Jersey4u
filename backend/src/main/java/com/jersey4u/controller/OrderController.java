@@ -1,6 +1,8 @@
 package com.jersey4u.controller;
 
 import com.jersey4u.dto.OrderRequest;
+import com.jersey4u.dto.RazorpayOrderResponse;
+import com.jersey4u.dto.RazorpayVerifyRequest;
 import com.jersey4u.model.CustomerOrder;
 import com.jersey4u.repository.OrderRepository;
 import com.jersey4u.service.OrderService;
@@ -24,14 +26,41 @@ public class OrderController {
     }
 
     /**
-     * POST /api/orders -> Validates cart items, recalculates INR totals server-side,
-     * and persists CustomerOrder + OrderItems in MySQL.
+     * POST /api/orders -> Direct COD checkout (recalculates totals server-side).
      */
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest request) {
         try {
             CustomerOrder savedOrder = orderService.placeOrder(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+        }
+    }
+
+    /**
+     * POST /api/orders/razorpay/create -> Creates Razorpay Test Mode order in paise
+     * and stores a PENDING_PAYMENT order in MySQL.
+     */
+    @PostMapping("/razorpay/create")
+    public ResponseEntity<?> createRazorpayOrder(@RequestBody OrderRequest request) {
+        try {
+            RazorpayOrderResponse rzpOrder = orderService.createRazorpayOrder(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(rzpOrder);
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+        }
+    }
+
+    /**
+     * POST /api/orders/razorpay/verify -> Verifies HMAC-SHA256 signature from Razorpay
+     * and promotes the MySQL order to PAID + CONFIRMED.
+     */
+    @PostMapping("/razorpay/verify")
+    public ResponseEntity<?> verifyRazorpayPayment(@RequestBody RazorpayVerifyRequest verifyRequest) {
+        try {
+            CustomerOrder confirmedOrder = orderService.verifyRazorpayPayment(verifyRequest);
+            return ResponseEntity.ok(confirmedOrder);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
         }
@@ -49,7 +78,7 @@ public class OrderController {
     }
 
     /**
-     * GET /api/orders -> List all orders (newest first or stored order).
+     * GET /api/orders -> List all orders.
      */
     @GetMapping
     public List<CustomerOrder> getAllOrders() {
