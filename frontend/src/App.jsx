@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import DiscoveryBar from './components/DiscoveryBar';
@@ -9,150 +9,59 @@ import WishlistDrawer from './components/WishlistDrawer';
 import './App.css';
 
 function App() {
-  // 1. STATE: Cart Items List
+  // 1. STATE: Live Jerseys Data from Spring Boot + MySQL
+  const [jerseys, setJerseys] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // 2. STATE: Cart Items List
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // 2. STATE: Wishlist Items List
+  // 3. STATE: Wishlist Items List
   const [wishlistItems, setWishlistItems] = useState([]);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
 
-  // 3. STATE: Selected League / Club Filter
+  // 4. STATE: Selected League / Club Filter
   const [selectedLeague, setSelectedLeague] = useState('all');
 
-  // 4. STATE: Active Product Detail Modal
+  // 5. STATE: Active Product Detail Modal
   const [activeJerseyDetail, setActiveJerseyDetail] = useState(null);
 
-  // Master Curated Catalog of Football Kits with INR Pricing & Full Details
-  const allJerseys = [
-    {
-      id: 1,
-      name: 'Real Madrid 2024/25 Authentic Home Kit',
-      team: 'Real Madrid',
-      league: 'La Liga',
-      season: '24/25',
-      price: 899,
-      originalPrice: 1499,
-      imageUrl: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=800&q=80',
-      inStock: true,
-      description:
-        "The official 2024/25 Real Madrid Home Jersey honors the club's eternal elegance and unmatched European dominance. Crafted with an exclusive houndstooth texture inspired by traditional 'chulapo' attire from Madrid's annual San Isidro Fiesta, this kit embodies pure royal Madridismo.",
-      features: [
-        'Official Master-Quality matchday player edition',
-        'HEAT.RDY cooling fabric technology with engineered mesh ventilation',
-        'Metallic gold Real Madrid embroidered crest and accents',
-        'Official LALIGA EA SPORTS sleeve badge included',
-        '100% Recycled polyester double-knit performance fabric'
-      ]
-    },
-    {
-      id: 2,
-      name: 'FC Barcelona 125th Anniversary Home Kit',
-      team: 'FC Barcelona',
-      league: 'La Liga',
-      season: '24/25',
-      price: 899,
-      originalPrice: 1499,
-      imageUrl: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80',
-      inStock: true,
-      description:
-        "Commemorating 125 years of Blaugrana glory (1899–2024). Features the iconic half-and-half design inspired by the club's very first kit worn by Joan Gamper, accented with commemorative gold anniversary crest detailing and Catalan Senyera pride.",
-      features: [
-        '125th Anniversary official commemorative edition',
-        'Dri-FIT ADV advanced sweat-wicking match fabric',
-        'Special edition central 125-year gold-trimmed crest',
-        'Catalan Senyera flag detailing on the upper back neck',
-        'Official Spotify and Ambilight TV match sponsors'
-      ]
-    },
-    {
-      id: 3,
-      name: 'Manchester City 2024/25 Authentic Home Kit',
-      team: 'Manchester City',
-      league: 'Premier League',
-      season: '24/25',
-      price: 849,
-      originalPrice: 1399,
-      imageUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
-      inStock: true,
-      description:
-        "Inspired by Manchester's iconic '0161' telephone dial code, woven directly into the collar and cuffs as a tribute to City's roots and unstoppable Treble-winning era under Pep Guardiola.",
-      features: [
-        'Authentic ULTRAWEAVE 4-way stretch match performance jersey',
-        '0161 Manchester area code graffiti pattern knitted into collar and trims',
-        'Official Premier League Champions gold sleeve badge',
-        'dryCELL moisture management technology',
-        'Tailored athletic aerodynamic silhouette'
-      ]
-    },
-    {
-      id: 4,
-      name: 'Arsenal 2024/25 Cannon Crest Home Kit',
-      team: 'Arsenal',
-      league: 'Premier League',
-      season: '24/25',
-      price: 849,
-      originalPrice: 1399,
-      imageUrl: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80',
-      inStock: false,
-      description:
-        "For the first time in 35 years, the standalone historic Arsenal Cannon takes center stage across the red and white chest, honoring the club's defensive legacy and Highbury tradition.",
-      features: [
-        'Historic standalone Cannon crest replacing the standard shield badge',
-        'HEAT.RDY breathable lightweight match performance weave',
-        'Navy blue side piping inspired by the iconic 1997/98 double-winning squad',
-        'Official Premier League matchday lettering font ready',
-        '100% Recycled polyester mesh'
-      ]
-    },
-    {
-      id: 5,
-      name: 'Argentina 2024 World Champions Copa Edition',
-      team: 'Argentina',
-      league: 'International',
-      season: '2024',
-      price: 949,
-      originalPrice: 1599,
-      imageUrl: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80',
-      inStock: true,
-      description:
-        'The jersey of champions. Featuring classic sky-blue and white vertical stripes emblazoned with the three golden stars and the official FIFA World Champions golden chest badge.',
-      features: [
-        'Official 3-Star FIFA World Champions edition',
-        'Gold FIFA World Cup Champions center crest',
-        'AFA crest with metallic gold trim and sun of May icon',
-        'Engineered jacquard airflow mesh for optimum performance in match heat',
-        'Official Messi #10 flocking configuration ready'
-      ]
-    },
-    {
-      id: 6,
-      name: 'AC Milan 2006/07 Athens Champions League Retro',
-      team: 'AC Milan',
-      league: 'Retro',
-      season: '06/07',
-      price: 799,
-      originalPrice: 1299,
-      imageUrl: 'https://images.unsplash.com/photo-1511886929837-354d827aae26?auto=format&fit=crop&w=800&q=80',
-      inStock: true,
-      description:
-        "The iconic all-white 'Maglia Fortunata' lucky kit worn by Kaká, Inzaghi, and Maldini in Athens to lift the 2007 UEFA Champions League trophy against Liverpool.",
-      features: [
-        'Faithful archival reproduction of the Athens 2007 UCL Final jersey',
-        'Embroidered AC Milan crest with 7-time Champions League trophy badge on sleeve',
-        'Classic Bwin flocking on chest',
-        'Breathable vintage polyester knit with retro collar and button placket',
-        'The definitive collector piece for Rossoneri purists'
-      ]
+  // LESSON 6: Fetch Real Kits from Spring Boot REST API
+  async function fetchJerseysFromVault() {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch('http://localhost:8081/api/jerseys');
+      if (!response.ok) {
+        throw new Error(`Spring Boot returned status ${response.status}`);
+      }
+
+      const data = await response.json();
+      setJerseys(data);
+    } catch (err) {
+      console.error('Error fetching jerseys from backend:', err);
+      setError(
+        'Unable to reach the Jersey4U Spring Boot backend on port 8081. Please ensure the server is running.'
+      );
+    } finally {
+      setLoading(false);
     }
-  ];
+  }
+
+  // Empty dependency array [] -> runs ONLY ONCE when App mounts!
+  useEffect(() => {
+    fetchJerseysFromVault();
+  }, []);
 
   // Client-side filtering by league or club name
-  const filteredJerseys = allJerseys.filter((jersey) => {
+  const filteredJerseys = jerseys.filter((jersey) => {
     if (selectedLeague === 'all') return true;
     return (
-      jersey.league.toLowerCase() === selectedLeague.toLowerCase() ||
-      jersey.team.toLowerCase().includes(selectedLeague.toLowerCase())
+      jersey.league?.toLowerCase() === selectedLeague.toLowerCase() ||
+      jersey.team?.toLowerCase().includes(selectedLeague.toLowerCase())
     );
   });
 
@@ -181,7 +90,7 @@ function App() {
             id: jersey.id,
             name: jersey.name,
             team: jersey.team,
-            price: jersey.price,
+            price: Number(jersey.price),
             imageUrl: jersey.imageUrl,
             size: size,
             quantity: 1
@@ -252,8 +161,8 @@ function App() {
       {/* 2. Hero Section */}
       <Hero
         onQuickAdd={handleAddToCart}
-        onOpenDetails={() => {
-          const match = allJerseys.find((j) => j.team === 'Real Madrid') || allJerseys[0];
+        onOpenDetails={(heroKit) => {
+          const match = jerseys.find((j) => j.team === 'Real Madrid') || jerseys[0] || heroKit;
           setActiveJerseyDetail(match);
         }}
       />
@@ -265,31 +174,59 @@ function App() {
         totalCount={filteredJerseys.length}
       />
 
-      {/* 4. Product Catalog Grid */}
+      {/* 4. Product Catalog Grid (Now powered by MySQL + Spring Boot!) */}
       <main className="catalog-wrapper" id="catalog">
         <div className="catalog-container">
           <div className="catalog-header">
             <div>
-              <span className="section-kicker">CURATED COLLECTION</span>
+              <span className="section-kicker">LIVE VAULT DATABASE</span>
               <h2 className="section-title">
                 {selectedLeague === 'all' ? 'All Vault Kits' : `${selectedLeague} Collection`}
               </h2>
             </div>
-            <span className="results-badge">{filteredJerseys.length} Kits Available</span>
+            <span className="results-badge">
+              {loading ? 'Syncing...' : `${filteredJerseys.length} Kits Available`}
+            </span>
           </div>
 
-          <div className="jersey-grid">
-            {filteredJerseys.map((jersey) => (
-              <JerseyCard
-                key={jersey.id}
-                jersey={jersey}
-                isWishlisted={wishlistItems.some((item) => item.id === jersey.id)}
-                onOpenDetails={(selected) => setActiveJerseyDetail(selected)}
-                onAddToCart={handleAddToCart}
-                onToggleWishlist={handleToggleWishlist}
-              />
-            ))}
-          </div>
+          {loading ? (
+            <div className="catalog-loading">
+              <div className="loading-spinner"></div>
+              <p>Fetching official kits from Spring Boot &amp; MySQL...</p>
+            </div>
+          ) : error ? (
+            <div className="catalog-error-card">
+              <h3>⚠️ Vault Connection Interrupted</h3>
+              <p>{error}</p>
+              <button type="button" className="retry-btn" onClick={fetchJerseysFromVault}>
+                🔄 Retry Connection
+              </button>
+            </div>
+          ) : filteredJerseys.length === 0 ? (
+            <div className="catalog-empty-state">
+              <p>No kits found for "{selectedLeague}".</p>
+              <button
+                type="button"
+                className="retry-btn"
+                onClick={() => setSelectedLeague('all')}
+              >
+                Show All Vault Kits
+              </button>
+            </div>
+          ) : (
+            <div className="jersey-grid">
+              {filteredJerseys.map((jersey) => (
+                <JerseyCard
+                  key={jersey.id}
+                  jersey={jersey}
+                  isWishlisted={wishlistItems.some((item) => item.id === jersey.id)}
+                  onOpenDetails={(selected) => setActiveJerseyDetail(selected)}
+                  onAddToCart={handleAddToCart}
+                  onToggleWishlist={handleToggleWishlist}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </main>
 
@@ -300,11 +237,11 @@ function App() {
             <span className="footer-logo">⚽ JERSEY4U</span>
             <span className="footer-tagline">THE FOOTBALL VAULT • 100% EMBROIDERED MERCHANDISE</span>
           </div>
-          <p className="footer-copy">© 2026 Jersey4U India. Built with Spring Boot 3, MySQL 8 & React.</p>
+          <p className="footer-copy">© 2026 Jersey4U India. Built with Spring Boot 3, MySQL 8 &amp; React.</p>
         </div>
       </footer>
 
-      {/* 6. Product Detail Modal (Single Card Open & Description View) */}
+      {/* 6. Product Detail Modal */}
       <ProductDetailModal
         jersey={activeJerseyDetail}
         onClose={() => setActiveJerseyDetail(null)}
