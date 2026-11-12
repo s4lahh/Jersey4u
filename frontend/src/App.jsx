@@ -7,6 +7,7 @@ import CustomizerAtelier from './components/CustomizerAtelier';
 import ProductDetailModal from './components/ProductDetailModal';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
+import CheckoutModal from './components/CheckoutModal';
 import './App.css';
 
 function App() {
@@ -32,6 +33,9 @@ function App() {
   // 6. STATE: Controlled Search Query & Customizer Selection (Lesson 7)
   const [searchQuery, setSearchQuery] = useState('');
   const [customizerKitId, setCustomizerKitId] = useState(1);
+
+  // 7. STATE: Checkout Modal (Lesson 8)
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   // LESSON 6: Fetch Real Kits from Spring Boot REST API
   async function fetchJerseysFromVault() {
@@ -307,6 +311,10 @@ function App() {
         cartItems={cartItems}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveFromCart}
+        onCheckout={() => {
+          setIsCartOpen(false);
+          setIsCheckoutOpen(true);
+        }}
       />
 
       {/* 8. Slide-Over Wishlist Drawer */}
@@ -316,6 +324,14 @@ function App() {
         wishlistItems={wishlistItems}
         onRemoveWishlist={handleRemoveWishlist}
         onMoveToCart={handleAddToCart}
+      />
+
+      {/* 9. Full-Stack Checkout Modal (Lesson 8) */}
+      <CheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        cartItems={cartItems}
+        onOrderSuccess={() => setCartItems([])}
       />
     </div>
   );

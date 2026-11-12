@@ -6,7 +6,8 @@ function CartDrawer({
   cartItems = [],
   onUpdateQuantity,
   onRemoveItem,
-  onClearCart
+  onClearCart,
+  onCheckout
 }) {
   if (!isOpen) return null;
 
@@ -115,7 +116,9 @@ function CartDrawer({
                           {item.customName || item.customNumber
                             ? `${item.customName || ''} ${item.customNumber ? `#${item.customNumber}` : ''}`.trim()
                             : 'Custom Badge'}
-                          {item.fontFinish === 'gold' ? ' • Gold Foil' : ''}
+                          {item.fontFinish === 'gold-foil' || item.fontFinish === 'gold'
+                            ? ' • Gold Foil'
+                            : ''}
                           {item.sleevePatch && item.sleevePatch !== 'none'
                             ? ` • ${item.sleevePatch.toUpperCase()} Patch`
                             : ''}
@@ -199,9 +202,7 @@ function CartDrawer({
               type="button"
               className="checkout-btn"
               onClick={() => {
-                alert(
-                  `🎉 Ready to Checkout!\n\nOrder Total: ₹${total}\n\nIn Phase 8, this button triggers Razorpay (UPI, GPay, PhonePe, Cards, NetBanking)!`
-                );
+                if (onCheckout) onCheckout();
               }}
             >
               PROCEED TO SECURE CHECKOUT ⚡
