@@ -68,7 +68,8 @@ public class OrderService {
     @Transactional
     public RazorpayOrderResponse createRazorpayOrder(OrderRequest request) {
         if (!hasText(razorpayKeyId) || !hasText(razorpayKeySecret)
-                || razorpayKeyId.contains("REPLACE_WITH")) {
+                || razorpayKeyId.contains("REPLACE_WITH")
+                || razorpayKeySecret.contains("REPLACE_WITH")) {
             throw new IllegalStateException(
                     "Razorpay Test Keys are not configured yet. Add razorpay.key-id and razorpay.key-secret in backend/src/main/resources/application-local.properties and restart Spring Boot (or use Cash on Delivery right now).");
         }
