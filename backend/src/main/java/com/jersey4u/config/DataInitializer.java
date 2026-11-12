@@ -35,7 +35,7 @@ public class DataInitializer implements CommandLineRunner {
                 "Home",
                 new BigDecimal("899"),
                 new BigDecimal("1499"),
-                "https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=800&q=80",
+                "/images/jerseys/real-madrid-home.jpg",
                 "The official 2024/25 Real Madrid Home Jersey honors the club's eternal elegance and unmatched European dominance. Crafted with an exclusive houndstooth texture inspired by traditional 'chulapo' attire from Madrid's annual San Isidro Fiesta, this kit embodies pure royal Madridismo.",
                 true,
                 true
@@ -49,7 +49,7 @@ public class DataInitializer implements CommandLineRunner {
                 "Home",
                 new BigDecimal("899"),
                 new BigDecimal("1499"),
-                "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80",
+                "/images/jerseys/barcelona-home.jpg",
                 "Commemorating 125 years of Blaugrana glory (1899-2024). Features the iconic half-and-half design inspired by the club's very first kit worn by Joan Gamper, accented with commemorative gold anniversary crest detailing and Catalan Senyera pride.",
                 true,
                 true
@@ -63,7 +63,7 @@ public class DataInitializer implements CommandLineRunner {
                 "Home",
                 new BigDecimal("849"),
                 new BigDecimal("1399"),
-                "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80",
+                "/images/jerseys/man-city-home.jpg",
                 "Inspired by Manchester's iconic '0161' telephone dial code, woven directly into the collar and cuffs as a tribute to City's roots and unstoppable Treble-winning era under Pep Guardiola.",
                 true,
                 true
@@ -77,7 +77,7 @@ public class DataInitializer implements CommandLineRunner {
                 "Home",
                 new BigDecimal("849"),
                 new BigDecimal("1399"),
-                "https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80",
+                "/images/jerseys/arsenal-home.jpg",
                 "For the first time in 35 years, the standalone historic Arsenal Cannon takes center stage across the red and white chest, honoring the club's defensive legacy and Highbury tradition.",
                 false,
                 true
@@ -91,7 +91,7 @@ public class DataInitializer implements CommandLineRunner {
                 "Home",
                 new BigDecimal("949"),
                 new BigDecimal("1599"),
-                "https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80",
+                "/images/jerseys/argentina-home.jpg",
                 "The jersey of champions. Featuring classic sky-blue and white vertical stripes emblazoned with the three golden stars and the official FIFA World Champions golden chest badge.",
                 true,
                 true
@@ -105,7 +105,7 @@ public class DataInitializer implements CommandLineRunner {
                 "Retro",
                 new BigDecimal("799"),
                 new BigDecimal("1299"),
-                "https://images.unsplash.com/photo-1511886929837-354d827aae26?auto=format&fit=crop&w=800&q=80",
+                "/images/jerseys/ac-milan-retro.jpg",
                 "The iconic all-white 'Maglia Fortunata' lucky kit worn by Kaka, Inzaghi, and Maldini in Athens to lift the 2007 UEFA Champions League trophy against Liverpool.",
                 true,
                 true

@@ -212,9 +212,10 @@
 .cart-item-thumb {
   width: 80px;
   height: 80px;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 0.25rem;
   border-radius: 0.45rem;
-  background-color: #f1f5f9;
+  background-color: #f3f4f6;
 }
 
 .cart-item-details {

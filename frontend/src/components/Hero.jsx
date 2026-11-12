@@ -11,7 +11,7 @@ function Hero({ onQuickAdd, onOpenDetails }) {
     team: 'Real Madrid',
     price: 899,
     originalPrice: 1499,
-    imageUrl: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/images/jerseys/real-madrid-home.jpg',
     inStock: true
   };
 
