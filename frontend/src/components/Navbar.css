@@ -157,6 +157,21 @@
   color: #94a3b8;
 }
 
+.search-clear-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0 0.15rem;
+  transition: color 0.15s ease;
+}
+
+.search-clear-btn:hover {
+  color: #0f172a;
+}
+
 /* Utility Buttons (Wishlist & Cart) */
 .utility-btn {
   background: #ffffff;

@@ -6,6 +6,7 @@ function ProductDetailModal({
   onClose,
   onAddToCart,
   onToggleWishlist,
+  onCustomize,
   isWishlisted = false
 }) {
   if (!jersey) return null;
@@ -226,7 +227,11 @@ function ProductDetailModal({
               <a
                 href="#customizer"
                 className="modal-customize-btn"
-                onClick={onClose}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onCustomize) onCustomize(jersey);
+                  onClose();
+                }}
               >
                 Customize with Player Name & Number (+₹150) ⚡
               </a>

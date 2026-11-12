@@ -5,6 +5,8 @@ function Navbar({
   wishlistCount = 0,
   selectedLeague = 'all',
   onSelectLeague,
+  searchQuery = '',
+  onSearchChange,
   onOpenCart,
   onOpenWishlist
 }) {
@@ -65,7 +67,15 @@ function Navbar({
               </li>
             ))}
             <li>
-              <a href="#customizer" className="customizer-link">
+              <a
+                href="#customizer"
+                className="customizer-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const el = document.getElementById('customizer');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 Customizer ⚙️
               </a>
             </li>
@@ -73,14 +83,35 @@ function Navbar({
 
           {/* Right Utility Bar: Search, Wishlist, Cart */}
           <div className="nav-utilities">
-            {/* Search Input */}
+            {/* Controlled Search Input */}
             <div className="search-bar">
               <span className="search-icon">🔍</span>
               <input
                 type="text"
-                placeholder="Search club, player, kit..."
+                placeholder="Search club, league, kit..."
                 className="search-input"
+                value={searchQuery}
+                onChange={(e) => {
+                  if (onSearchChange) {
+                    onSearchChange(e.target.value);
+                  }
+                  const catalogEl = document.getElementById('catalog');
+                  if (catalogEl && e.target.value.trim().length === 1) {
+                    catalogEl.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="search-clear-btn"
+                  onClick={() => onSearchChange && onSearchChange('')}
+                  title="Clear search"
+                  aria-label="Clear search"
+                >
+                  ✕
+                </button>
+              )}
             </div>
 
             {/* Wishlist Button */}

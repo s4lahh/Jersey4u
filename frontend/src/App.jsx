@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import DiscoveryBar from './components/DiscoveryBar';
 import JerseyCard from './components/JerseyCard';
+import CustomizerAtelier from './components/CustomizerAtelier';
 import ProductDetailModal from './components/ProductDetailModal';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
@@ -27,6 +28,10 @@ function App() {
 
   // 5. STATE: Active Product Detail Modal
   const [activeJerseyDetail, setActiveJerseyDetail] = useState(null);
+
+  // 6. STATE: Controlled Search Query & Customizer Selection (Lesson 7)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [customizerKitId, setCustomizerKitId] = useState(1);
 
   // LESSON 6: Fetch Real Kits from Spring Boot REST API
   async function fetchJerseysFromVault() {
@@ -56,25 +61,38 @@ function App() {
     fetchJerseysFromVault();
   }, []);
 
-  // Client-side filtering by league or club name
+  // Client-side filtering by league/club AND live search query
+  const normalizedQuery = searchQuery.trim().toLowerCase();
   const filteredJerseys = jerseys.filter((jersey) => {
-    if (selectedLeague === 'all') return true;
-    return (
+    const matchesLeague =
+      selectedLeague === 'all' ||
       jersey.league?.toLowerCase() === selectedLeague.toLowerCase() ||
-      jersey.team?.toLowerCase().includes(selectedLeague.toLowerCase())
-    );
+      jersey.team?.toLowerCase().includes(selectedLeague.toLowerCase());
+
+    const matchesSearch =
+      !normalizedQuery ||
+      jersey.name?.toLowerCase().includes(normalizedQuery) ||
+      jersey.team?.toLowerCase().includes(normalizedQuery) ||
+      jersey.league?.toLowerCase().includes(normalizedQuery);
+
+    return matchesLeague && matchesSearch;
   });
 
   // Derived totals
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const wishlistCount = wishlistItems.length;
 
-  // Handler: Add to Cart (with specific size and quantity)
-  function handleAddToCart(jersey, size = 'M') {
+  // Handler: Add to Cart (supports blank kits AND custom printed kits via composite lineKey)
+  function handleAddToCart(jersey, size = 'M', customization = null) {
+    const customName = customization?.customName?.trim() || '';
+    const customNumber = customization?.customNumber?.trim() || '';
+    const fontFinish = customization?.fontFinish || 'standard';
+    const sleevePatch = customization?.sleevePatch || 'none';
+    const lineKey = `${jersey.id}-${size}-${customName}-${customNumber}-${fontFinish}-${sleevePatch}`;
+    const unitPrice = customization?.totalPrice ?? Number(jersey.price);
+
     setCartItems((prevItems) => {
-      const existingIndex = prevItems.findIndex(
-        (item) => item.id === jersey.id && item.size === size
-      );
+      const existingIndex = prevItems.findIndex((item) => item.lineKey === lineKey);
 
       if (existingIndex > -1) {
         const updated = [...prevItems];
@@ -87,12 +105,17 @@ function App() {
         return [
           ...prevItems,
           {
+            lineKey,
             id: jersey.id,
             name: jersey.name,
             team: jersey.team,
-            price: Number(jersey.price),
+            price: unitPrice,
             imageUrl: jersey.imageUrl,
             size: size,
+            customName,
+            customNumber,
+            fontFinish,
+            sleevePatch,
             quantity: 1
           }
         ];
@@ -104,11 +127,12 @@ function App() {
   }
 
   // Handler: Update Quantity in Cart
-  function handleUpdateQuantity(id, size, delta) {
+  function handleUpdateQuantity(lineKey, delta) {
     setCartItems((prevItems) =>
       prevItems
         .map((item) => {
-          if (item.id === id && item.size === size) {
+          const currentKey = item.lineKey || `${item.id}-${item.size}`;
+          if (currentKey === lineKey) {
             const nextQty = item.quantity + delta;
             return nextQty > 0 ? { ...item, quantity: nextQty } : null;
           }
@@ -119,9 +143,9 @@ function App() {
   }
 
   // Handler: Remove Item from Cart
-  function handleRemoveFromCart(id, size) {
+  function handleRemoveFromCart(lineKey) {
     setCartItems((prevItems) =>
-      prevItems.filter((item) => !(item.id === id && item.size === size))
+      prevItems.filter((item) => (item.lineKey || `${item.id}-${item.size}`) !== lineKey)
     );
   }
 
@@ -154,6 +178,8 @@ function App() {
         wishlistCount={wishlistCount}
         selectedLeague={selectedLeague}
         onSelectLeague={setSelectedLeague}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenWishlist={() => setIsWishlistOpen(true)}
       />
@@ -204,11 +230,18 @@ function App() {
             </div>
           ) : filteredJerseys.length === 0 ? (
             <div className="catalog-empty-state">
-              <p>No kits found for "{selectedLeague}".</p>
+              <p>
+                No kits found
+                {selectedLeague !== 'all' ? ` for "${selectedLeague}"` : ''}
+                {searchQuery.trim() ? ` matching "${searchQuery.trim()}"` : ''}.
+              </p>
               <button
                 type="button"
                 className="retry-btn"
-                onClick={() => setSelectedLeague('all')}
+                onClick={() => {
+                  setSelectedLeague('all');
+                  setSearchQuery('');
+                }}
               >
                 Show All Vault Kits
               </button>
@@ -230,7 +263,15 @@ function App() {
         </div>
       </main>
 
-      {/* 5. Minimal Natural Studio Footer */}
+      {/* 5. Interactive 2D Jersey Customizer Atelier (Lesson 7) */}
+      <CustomizerAtelier
+        jerseys={jerseys}
+        selectedKitId={customizerKitId}
+        onSelectKitId={setCustomizerKitId}
+        onAddCustomToCart={handleAddToCart}
+      />
+
+      {/* 6. Minimal Natural Studio Footer */}
       <footer className="vault-footer">
         <div className="footer-container">
           <div className="footer-brand">
@@ -247,6 +288,11 @@ function App() {
         onClose={() => setActiveJerseyDetail(null)}
         onAddToCart={handleAddToCart}
         onToggleWishlist={handleToggleWishlist}
+        onCustomize={(kit) => {
+          setCustomizerKitId(kit.id);
+          const el = document.getElementById('customizer');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }}
         isWishlisted={
           activeJerseyDetail
             ? wishlistItems.some((item) => item.id === activeJerseyDetail.id)

@@ -90,64 +90,82 @@ function CartDrawer({
             </div>
           ) : (
             <ul className="cart-items-list">
-              {cartItems.map((item) => (
-                <li
-                  key={`${item.id}-${item.size}`}
-                  className="cart-item-card"
-                >
-                  <img
-                    src={item.imageUrl}
-                    alt={item.name}
-                    className="cart-item-thumb"
-                  />
+              {cartItems.map((item) => {
+                const lineKey = item.lineKey || `${item.id}-${item.size}`;
+                const hasCustomPrint =
+                  item.customName ||
+                  item.customNumber ||
+                  (item.sleevePatch && item.sleevePatch !== 'none');
 
-                  <div className="cart-item-details">
-                    <span className="cart-item-team">{item.team}</span>
-                    <h5 className="cart-item-name">{item.name}</h5>
+                return (
+                  <li key={lineKey} className="cart-item-card">
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                      className="cart-item-thumb"
+                    />
 
-                    <div className="cart-item-meta">
-                      <span className="cart-item-size-pill">
-                        Size: <strong>{item.size}</strong>
-                      </span>
-                      <span className="cart-item-price">
-                        ₹{item.price * item.quantity}
-                      </span>
-                    </div>
+                    <div className="cart-item-details">
+                      <span className="cart-item-team">{item.team}</span>
+                      <h5 className="cart-item-name">{item.name}</h5>
 
-                    {/* Quantity Controls & Remove */}
-                    <div className="cart-item-actions">
-                      <div className="qty-counter">
-                        <button
-                          type="button"
-                          className="qty-btn"
-                          onClick={() => onUpdateQuantity(item.id, item.size, -1)}
-                          title="Decrease quantity"
-                        >
-                          -
-                        </button>
-                        <span className="qty-value">{item.quantity}</span>
-                        <button
-                          type="button"
-                          className="qty-btn"
-                          onClick={() => onUpdateQuantity(item.id, item.size, 1)}
-                          title="Increase quantity"
-                        >
-                          +
-                        </button>
+                      {hasCustomPrint && (
+                        <div className="cart-custom-badge">
+                          ✨{' '}
+                          {item.customName || item.customNumber
+                            ? `${item.customName || ''} ${item.customNumber ? `#${item.customNumber}` : ''}`.trim()
+                            : 'Custom Badge'}
+                          {item.fontFinish === 'gold' ? ' • Gold Foil' : ''}
+                          {item.sleevePatch && item.sleevePatch !== 'none'
+                            ? ` • ${item.sleevePatch.toUpperCase()} Patch`
+                            : ''}
+                        </div>
+                      )}
+
+                      <div className="cart-item-meta">
+                        <span className="cart-item-size-pill">
+                          Size: <strong>{item.size}</strong>
+                        </span>
+                        <span className="cart-item-price">
+                          ₹{item.price * item.quantity}
+                        </span>
                       </div>
 
-                      <button
-                        type="button"
-                        className="remove-item-btn"
-                        onClick={() => onRemoveItem(item.id, item.size)}
-                        title="Remove kit"
-                      >
-                        🗑️ Remove
-                      </button>
+                      {/* Quantity Controls & Remove */}
+                      <div className="cart-item-actions">
+                        <div className="qty-counter">
+                          <button
+                            type="button"
+                            className="qty-btn"
+                            onClick={() => onUpdateQuantity(lineKey, -1)}
+                            title="Decrease quantity"
+                          >
+                            -
+                          </button>
+                          <span className="qty-value">{item.quantity}</span>
+                          <button
+                            type="button"
+                            className="qty-btn"
+                            onClick={() => onUpdateQuantity(lineKey, 1)}
+                            title="Increase quantity"
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="remove-item-btn"
+                          onClick={() => onRemoveItem(lineKey)}
+                          title="Remove kit"
+                        >
+                          🗑️ Remove
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
