@@ -1,10 +1,20 @@
 import { useState, useEffect } from 'react';
 import './MyOrdersModal.css';
 
-function MyOrdersModal({ isOpen, onClose, authToken, user }) {
+function MyOrdersModal({
+  isOpen,
+  onClose,
+  authToken,
+  user,
+  jerseys = [],
+  onOpenJerseyDetails
+}) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [payingOrderCode, setPayingOrderCode] = useState(null);
+  const [payError, setPayError] = useState('');
+  const [activeTrackingCode, setActiveTrackingCode] = useState(null);
 
   useEffect(() => {
     if (isOpen && authToken) {
@@ -16,6 +26,7 @@ function MyOrdersModal({ isOpen, onClose, authToken, user }) {
     try {
       setLoading(true);
       setError(null);
+      setPayError('');
 
       const response = await fetch('http://localhost:8081/api/orders/my-orders', {
         headers: {
@@ -29,11 +40,116 @@ function MyOrdersModal({ isOpen, onClose, authToken, user }) {
 
       const data = await response.json();
       setOrders(data);
+      // Automatically expand tracking for the most recent order
+      if (data && data.length > 0 && !activeTrackingCode) {
+        setActiveTrackingCode(data[0].orderCode);
+      }
     } catch (err) {
       setError(err.message || 'Unable to retrieve order history.');
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handlePayPendingOrder(order) {
+    if (!window.Razorpay) {
+      setPayError('Razorpay SDK is loading. Please check your internet connection.');
+      return;
+    }
+
+    try {
+      setPayingOrderCode(order.orderCode);
+      setPayError('');
+
+      // Step 1: Create or fetch gateway order for this existing order
+      const res = await fetch(`http://localhost:8081/api/orders/${order.orderCode}/pay`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`
+        }
+      });
+
+      const rzpData = await res.json();
+      if (!res.ok) {
+        throw new Error(rzpData.message || 'Unable to initiate payment.');
+      }
+
+      // Step 2: Launch official Razorpay Checkout popup
+      const options = {
+        key: rzpData.keyId,
+        amount: rzpData.amountInPaise,
+        currency: rzpData.currency || 'INR',
+        name: 'Jersey4U — The Football Vault',
+        description: `Payment for Order ${order.orderCode}`,
+        order_id: rzpData.razorpayOrderId,
+        prefill: {
+          name: rzpData.customerName || user?.name || '',
+          email: rzpData.customerEmail || user?.email || '',
+          contact: rzpData.customerPhone || user?.phone || ''
+        },
+        theme: {
+          color: '#0f172a'
+        },
+        handler: async function (rzpResponse) {
+          try {
+            // Step 3: Verify HMAC-SHA256 signature on Spring Boot backend
+            const verifyRes = await fetch('http://localhost:8081/api/orders/razorpay/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpayOrderId: rzpResponse.razorpay_order_id,
+                razorpayPaymentId: rzpResponse.razorpay_payment_id,
+                razorpaySignature: rzpResponse.razorpay_signature
+              })
+            });
+
+            if (!verifyRes.ok) {
+              const errData = await verifyRes.json();
+              throw new Error(errData.message || 'Payment signature verification failed.');
+            }
+
+            // Successfully paid! Refresh orders list live
+            await fetchMyOrders();
+          } catch (vErr) {
+            setPayError(vErr.message || 'Payment verification failed on server.');
+          } finally {
+            setPayingOrderCode(null);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setPayingOrderCode(null);
+          }
+        }
+      };
+
+      const popup = new window.Razorpay(options);
+      popup.on('payment.failed', function (failRes) {
+        setPayingOrderCode(null);
+        setPayError(failRes.error?.description || 'Payment was not completed.');
+      });
+      popup.open();
+    } catch (err) {
+      setPayingOrderCode(null);
+      setPayError(err.message || 'Payment initiation failed.');
+    }
+  }
+
+  function getEstimatedDeliveryDate(createdDateStr) {
+    const d = createdDateStr ? new Date(createdDateStr) : new Date();
+    d.setDate(d.getDate() + 4);
+    return d.toLocaleDateString('en-IN', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  }
+
+  function getTrackingNumber(orderCode) {
+    const digits = orderCode.replace(/\D/g, '') || '883921';
+    return `BD-IN-78${digits}`;
   }
 
   if (!isOpen) return null;
@@ -51,12 +167,18 @@ function MyOrdersModal({ isOpen, onClose, authToken, user }) {
         </button>
 
         <div className="orders-header">
-          <span className="orders-kicker">AUTHENTICATED WITH JWT</span>
+          <span className="orders-kicker">AUTHENTICATED • SPRING SECURITY 6</span>
           <h3 className="orders-title">My Matchday Orders</h3>
           <p className="orders-subtitle">
-            Order history and tracking for <strong>{user?.name || user?.email}</strong>
+            Order history, live tracking, and single-click payment for <strong>{user?.name || user?.email}</strong>
           </p>
         </div>
+
+        {payError && (
+          <div className="orders-pay-error-banner">
+            ⚠️ {payError}
+          </div>
+        )}
 
         {loading ? (
           <div className="orders-loading">
@@ -67,85 +189,232 @@ function MyOrdersModal({ isOpen, onClose, authToken, user }) {
           <div className="orders-error">
             <p>⚠️ {error}</p>
             <button type="button" className="retry-orders-btn" onClick={fetchMyOrders}>
-              Retry
+              Retry Connection
             </button>
           </div>
         ) : orders.length === 0 ? (
           <div className="orders-empty">
             <span className="empty-orders-icon">📦</span>
             <h4>No matchday orders placed yet</h4>
-            <p>Your official club jerseys and custom kits will appear here once confirmed.</p>
+            <p>Your official club jerseys and custom flocking kits will appear here once confirmed.</p>
             <button type="button" className="explore-btn" onClick={onClose}>
               EXPLORE VAULT KITS →
             </button>
           </div>
         ) : (
           <div className="orders-list">
-            {orders.map((order) => (
-              <div key={order.id} className="order-receipt-card">
-                <div className="order-receipt-top">
-                  <div>
-                    <span className="order-ref-label">ORDER REFERENCE</span>
-                    <div className="order-code-val">{order.orderCode}</div>
-                    <span className="order-date-val">
-                      {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      }) : 'Recent'}
-                    </span>
+            {orders.map((order) => {
+              const isPaid = order.paymentStatus === 'PAID';
+              const isCod = order.paymentMethod === 'COD';
+              const isExpanded = activeTrackingCode === order.orderCode;
+
+              return (
+                <div key={order.id} className="order-receipt-card">
+                  {/* Top Header Row */}
+                  <div className="order-receipt-top">
+                    <div>
+                      <span className="order-ref-label">ORDER REFERENCE</span>
+                      <div className="order-code-val">{order.orderCode}</div>
+                      <span className="order-date-val">
+                        Placed on{' '}
+                        {order.createdAt
+                          ? new Date(order.createdAt).toLocaleDateString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })
+                          : 'Recent'}
+                      </span>
+                    </div>
+
+                    <div className="order-badges">
+                      <span className="order-badge status">{order.orderStatus}</span>
+                      <span className={`order-badge method ${isPaid ? 'paid' : 'pending'}`}>
+                        {order.paymentMethod} • {order.paymentStatus}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="order-badges">
-                    <span className="order-badge status">{order.orderStatus}</span>
-                    <span className="order-badge method">
-                      {order.paymentMethod} • {order.paymentStatus}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="order-card-divider"></div>
-
-                <ul className="order-items-sublist">
-                  {order.items?.map((item) => (
-                    <li key={item.id} className="order-item-row">
-                      <div className="order-item-desc">
-                        <span className="item-title">
-                          {item.jerseyName} (Size: <strong>{item.size}</strong>) × {item.quantity}
+                  {/* Pending Payment Alert & Instant Pay Button */}
+                  {!isPaid && (
+                    <div className="pending-payment-alert-box">
+                      <div className="pending-text-col">
+                        <span className="pending-title">
+                          {isCod ? '📦 Cash on Delivery Order' : '⏳ Payment Pending'}
                         </span>
-                        {(item.customName || item.customNumber) && (
-                          <span className="item-flocking">
-                            ✨ {item.customName} #{item.customNumber}
-                            {item.fontFinish === 'gold-foil' ? ' • Gold Foil' : ''}
-                            {item.sleevePatch && item.sleevePatch !== 'none'
-                              ? ` • ${item.sleevePatch.toUpperCase()} Patch`
-                              : ''}
-                          </span>
-                        )}
+                        <span className="pending-desc">
+                          {isCod
+                            ? `Amount due at doorstep: ₹${Number(order.totalAmount)}. You can also pay online right now!`
+                            : `Complete payment of ₹${Number(order.totalAmount)} with Razorpay to expedite dispatch.`}
+                        </span>
                       </div>
-                      <span className="item-line-price">₹{Number(item.lineTotal)}</span>
-                    </li>
-                  ))}
-                </ul>
+                      <button
+                        type="button"
+                        className="pay-now-order-btn"
+                        onClick={() => handlePayPendingOrder(order)}
+                        disabled={payingOrderCode === order.orderCode}
+                      >
+                        {payingOrderCode === order.orderCode
+                          ? 'OPENING GATEWAY...'
+                          : `⚡ PAY ₹${Number(order.totalAmount)} WITH RAZORPAY`}
+                      </button>
+                    </div>
+                  )}
 
-                <div className="order-card-divider"></div>
-
-                <div className="order-receipt-footer">
-                  <div className="order-delivery-address">
-                    <span className="address-label">DELIVERED TO:</span>
-                    <p>
-                      {order.shippingAddress}, {order.city} — {order.pincode}
-                    </p>
+                  {/* Toggle Tracking Timeline */}
+                  <div className="tracking-toggle-row">
+                    <button
+                      type="button"
+                      className="tracking-toggle-btn"
+                      onClick={() =>
+                        setActiveTrackingCode(isExpanded ? null : order.orderCode)
+                      }
+                    >
+                      <span>🚚 Package Tracking &amp; Delivery Timeline</span>
+                      <span className="toggle-arrow">{isExpanded ? '▴' : '▾'}</span>
+                    </button>
                   </div>
-                  <div className="order-total-due">
-                    <span className="total-label">ORDER TOTAL</span>
-                    <span className="total-val">₹{Number(order.totalAmount)}</span>
+
+                  {/* Visual Multi-Step Tracking Timeline */}
+                  {isExpanded && (
+                    <div className="tracking-timeline-box">
+                      <div className="tracking-meta-header">
+                        <div>
+                          <span className="meta-label">COURIER PARTNER</span>
+                          <span className="meta-val">BlueDart Express</span>
+                        </div>
+                        <div>
+                          <span className="meta-label">AWB / TRACKING NO.</span>
+                          <span className="meta-val mono">{getTrackingNumber(order.orderCode)}</span>
+                        </div>
+                        <div>
+                          <span className="meta-label">ESTIMATED DELIVERY</span>
+                          <span className="meta-val green">{getEstimatedDeliveryDate(order.createdAt)}</span>
+                        </div>
+                      </div>
+
+                      <div className="timeline-steps">
+                        <div className="timeline-step completed">
+                          <div className="step-circle">✓</div>
+                          <div className="step-content">
+                            <span className="step-title">Order Confirmed</span>
+                            <span className="step-sub">Verified &amp; logged in MySQL Vault</span>
+                          </div>
+                        </div>
+
+                        <div className="timeline-step active">
+                          <div className="step-circle pulse">2</div>
+                          <div className="step-content">
+                            <span className="step-title">Flocking &amp; Quality Inspection</span>
+                            <span className="step-sub">Applying official badges and printing</span>
+                          </div>
+                        </div>
+
+                        <div className="timeline-step upcoming">
+                          <div className="step-circle">3</div>
+                          <div className="step-content">
+                            <span className="step-title">Handed to BlueDart Express</span>
+                            <span className="step-sub">Dispatched from Mumbai hub</span>
+                          </div>
+                        </div>
+
+                        <div className="timeline-step upcoming">
+                          <div className="step-circle">4</div>
+                          <div className="step-content">
+                            <span className="step-title">Out for Delivery</span>
+                            <span className="step-sub">Arriving at your doorstep</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="order-card-divider"></div>
+
+                  {/* Ordered Items List (Clickable to open Product Detail Modal!) */}
+                  <div className="ordered-items-section-header">
+                    <span>ORDERED KITS ({order.items?.length || 0}) — CLICK TO VIEW PRODUCT DETAILS</span>
+                  </div>
+
+                  <ul className="order-items-sublist">
+                    {order.items?.map((item) => {
+                      const matchedJersey =
+                        jerseys.find((j) => j.id === item.jerseyId) ||
+                        jerseys.find((j) => j.name === item.jerseyName);
+
+                      return (
+                        <li
+                          key={item.id}
+                          className="order-item-clickable-card"
+                          onClick={() => {
+                            if (matchedJersey && onOpenJerseyDetails) {
+                              onOpenJerseyDetails(matchedJersey);
+                              onClose();
+                            }
+                          }}
+                          title="Click to view kit details"
+                        >
+                          {matchedJersey?.imageUrl ? (
+                            <img
+                              src={matchedJersey.imageUrl}
+                              alt={item.jerseyName}
+                              className="order-item-thumbnail"
+                            />
+                          ) : (
+                            <div className="order-item-fallback-thumb">⚽</div>
+                          )}
+
+                          <div className="order-item-desc">
+                            <div className="item-title-row">
+                              <span className="item-title">{item.jerseyName}</span>
+                              <span className="inspect-link">View Details ↗</span>
+                            </div>
+
+                            <span className="item-specs-sub">
+                              Size: <strong>{item.size}</strong> • Quantity: <strong>{item.quantity}</strong>
+                            </span>
+
+                            {(item.customName || item.customNumber) && (
+                              <span className="item-flocking">
+                                ✨ Flocked: {item.customName} #{item.customNumber}
+                                {item.fontFinish === 'gold-foil' ? ' • Gold Foil' : ''}
+                                {item.sleevePatch && item.sleevePatch !== 'none'
+                                  ? ` • ${item.sleevePatch.toUpperCase()} Patch`
+                                  : ''}
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="item-price-col">
+                            <span className="item-line-price">₹{Number(item.lineTotal)}</span>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+
+                  <div className="order-card-divider"></div>
+
+                  {/* Address & Total Footer */}
+                  <div className="order-receipt-footer">
+                    <div className="order-delivery-address">
+                      <span className="address-label">DELIVERING TO</span>
+                      <p>
+                        {order.shippingAddress}, {order.city} — <strong>{order.pincode}</strong>
+                      </p>
+                      <p className="phone-sub">Phone: {order.customerPhone}</p>
+                    </div>
+
+                    <div className="order-total-due">
+                      <span className="total-label">ORDER TOTAL DUE</span>
+                      <span className="total-val">₹{Number(order.totalAmount)}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

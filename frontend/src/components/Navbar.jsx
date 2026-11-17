@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import './Navbar.css';
 
 function Navbar({
@@ -14,6 +15,19 @@ function Navbar({
   onOpenMyOrders,
   onLogout
 }) {
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close user dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   const navCategories = [
     { id: 'all', label: 'All Kits' },
     { id: 'Premier League', label: 'Premier League' },
@@ -118,26 +132,57 @@ function Navbar({
               )}
             </div>
 
-            {/* User Auth / Orders Button */}
+            {/* User Auth / Orders Dropdown Menu */}
             {currentUser ? (
-              <div className="user-nav-group">
+              <div className="user-dropdown-container" ref={dropdownRef}>
                 <button
                   type="button"
-                  className="utility-btn user-btn"
-                  onClick={onOpenMyOrders}
-                  title="View My Orders"
+                  className={`utility-btn user-menu-trigger ${isUserMenuOpen ? 'active' : ''}`}
+                  onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                  title="My Account"
+                  aria-expanded={isUserMenuOpen}
                 >
-                  👤 <span className="user-name">{currentUser.name ? currentUser.name.split(' ')[0] : 'Fan'}</span>
+                  <span className="user-initial-badge">
+                    {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+                  </span>
+                  <span className="user-first-name">
+                    {currentUser.name ? currentUser.name.split(' ')[0] : 'Fan'}
+                  </span>
+                  <span className="user-chevron">{isUserMenuOpen ? '▴' : '▾'}</span>
                 </button>
-                <button
-                  type="button"
-                  className="utility-btn logout-btn"
-                  onClick={onLogout}
-                  title="Sign Out"
-                  aria-label="Sign Out"
-                >
-                  🚪
-                </button>
+
+                {isUserMenuOpen && (
+                  <div className="user-dropdown-panel">
+                    <div className="dropdown-account-header">
+                      <span className="dropdown-user-title">{currentUser.name || 'Football Fan'}</span>
+                      <span className="dropdown-user-email">{currentUser.email}</span>
+                    </div>
+                    <div className="dropdown-sep"></div>
+                    <button
+                      type="button"
+                      className="dropdown-action-btn"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        if (onOpenMyOrders) onOpenMyOrders();
+                      }}
+                    >
+                      <span className="dropdown-action-icon">📦</span>
+                      <span>My Orders &amp; Tracking</span>
+                    </button>
+                    <div className="dropdown-sep"></div>
+                    <button
+                      type="button"
+                      className="dropdown-action-btn signout-action"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        if (onLogout) onLogout();
+                      }}
+                    >
+                      <span className="dropdown-action-icon">🚪</span>
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <button
@@ -146,7 +191,8 @@ function Navbar({
                 onClick={onOpenAuth}
                 title="Sign In or Register"
               >
-                👤 <span className="signin-text">Sign In</span>
+                <span className="signin-icon">👤</span>
+                <span className="signin-text">Sign In</span>
               </button>
             )}
 

@@ -53,6 +53,19 @@ public class OrderController {
     }
 
     /**
+     * POST /api/orders/{orderCode}/pay -> Initiates Razorpay payment for an existing pending order.
+     */
+    @PostMapping("/{orderCode}/pay")
+    public ResponseEntity<?> payExistingOrder(@PathVariable String orderCode) {
+        try {
+            RazorpayOrderResponse rzpOrder = orderService.createRazorpayOrderForExisting(orderCode);
+            return ResponseEntity.ok(rzpOrder);
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+        }
+    }
+
+    /**
      * POST /api/orders/razorpay/verify -> Verifies HMAC-SHA256 signature from Razorpay
      * and promotes the MySQL order to PAID + CONFIRMED.
      */

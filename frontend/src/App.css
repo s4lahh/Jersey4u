@@ -1,6 +1,9 @@
 /* App Layout & Core Shell - Natural Studio Theme */
 .app-layout {
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   background-color: #f8fafc;

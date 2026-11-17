@@ -110,6 +110,57 @@ public class OrderService {
     }
 
     /**
+     * Creates or updates a Razorpay gateway order for an existing pending customer order.
+     */
+    @Transactional
+    public RazorpayOrderResponse createRazorpayOrderForExisting(String orderCode) {
+        if (!hasText(razorpayKeyId) || !hasText(razorpayKeySecret)
+                || razorpayKeyId.contains("REPLACE_WITH")
+                || razorpayKeySecret.contains("REPLACE_WITH")) {
+            throw new IllegalStateException("Razorpay Test Keys are not configured.");
+        }
+
+        CustomerOrder order = orderRepository.findByOrderCode(orderCode)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderCode));
+
+        if ("PAID".equalsIgnoreCase(order.getPaymentStatus())) {
+            throw new IllegalArgumentException("This order is already marked as PAID.");
+        }
+
+        long amountInPaise = order.getTotalAmount()
+                .multiply(new BigDecimal("100"))
+                .longValueExact();
+
+        try {
+            RazorpayClient client = new RazorpayClient(razorpayKeyId.trim(), razorpayKeySecret.trim());
+            JSONObject orderRequest = new JSONObject();
+            orderRequest.put("amount", amountInPaise);
+            orderRequest.put("currency", "INR");
+            orderRequest.put("receipt", order.getOrderCode());
+
+            Order rzpOrder = client.orders.create(orderRequest);
+            String rzpOrderId = rzpOrder.get("id");
+
+            order.setRazorpayOrderId(rzpOrderId);
+            order.setPaymentMethod("RAZORPAY");
+            orderRepository.save(order);
+
+            return new RazorpayOrderResponse(
+                    order.getOrderCode(),
+                    rzpOrderId,
+                    amountInPaise,
+                    "INR",
+                    razorpayKeyId.trim(),
+                    order.getCustomerName(),
+                    order.getCustomerPhone(),
+                    order.getCustomerEmail()
+            );
+        } catch (RazorpayException ex) {
+            throw new IllegalStateException("Razorpay API error: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Step 2 of Razorpay Flow: Verifies HMAC-SHA256 cryptographic signature using keySecret,
      * then marks the MySQL order PAID & CONFIRMED.
      */

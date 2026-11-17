@@ -412,6 +412,8 @@ function App() {
         onClose={() => setIsMyOrdersOpen(false)}
         authToken={authToken}
         user={currentUser}
+        jerseys={jerseys}
+        onOpenJerseyDetails={(kit) => setActiveJerseyDetail(kit)}
       />
     </div>
   );

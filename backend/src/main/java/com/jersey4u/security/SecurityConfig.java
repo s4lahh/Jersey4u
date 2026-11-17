@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/jerseys/**").permitAll()
 
                 // Checkout & Order Placement (Can be guest or logged-in)
-                .requestMatchers(HttpMethod.POST, "/api/orders", "/api/orders/razorpay/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/orders", "/api/orders/razorpay/**", "/api/orders/*/pay").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/orders/{orderCode}").permitAll()
 
                 // Protected User Endpoints (Requires valid JWT)
