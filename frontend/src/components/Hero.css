@@ -344,3 +344,68 @@
     justify-content: center;
   }
 }
+
+
+/* Hero Spotlight Out-of-Stock / Sold-Out Enhancements */
+.hero-img-relative {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-jersey-img.hero-sold-out-img {
+  opacity: 0.85;
+  filter: grayscale(25%);
+}
+
+.hero-sold-out-badge {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 0.35rem 0.8rem;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+  text-transform: uppercase;
+  z-index: 5;
+}
+
+.glass-team-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.hero-stock-pill-out {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #dc2626;
+  background: #fef2f2;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid #fecaca;
+}
+
+.glass-chip.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.glass-add-btn.sold-out {
+  background: #e2e8f0;
+  color: #64748b;
+  cursor: not-allowed;
+  border: 1px solid #cbd5e1;
+  box-shadow: none;
+}
+
+.glass-add-btn.sold-out:hover {
+  background: #e2e8f0;
+  transform: none;
+}

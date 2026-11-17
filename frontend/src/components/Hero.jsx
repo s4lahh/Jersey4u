@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import './Hero.css';
 
-function Hero({ onQuickAdd, onOpenDetails }) {
+function Hero({ jerseys = [], onQuickAdd, onOpenDetails }) {
   const [heroSize, setHeroSize] = useState('L');
   const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
-  const heroJersey = {
+  const defaultHero = {
     id: 1,
     name: 'Real Madrid 2024/25 Authentic Home Kit',
     team: 'Real Madrid',
@@ -14,6 +14,10 @@ function Hero({ onQuickAdd, onOpenDetails }) {
     imageUrl: '/images/jerseys/real-madrid-home.jpg',
     inStock: true
   };
+
+  // Dynamically resolve Real Madrid kit from live backend state
+  const heroJersey = jerseys.find((j) => j.team === 'Real Madrid' || j.id === 1) || defaultHero;
+  const isOutOfStock = heroJersey.inStock === false;
 
   return (
     <section className="hero-section">
@@ -58,14 +62,21 @@ function Hero({ onQuickAdd, onOpenDetails }) {
           <div className="hero-spotlight-glow"></div>
 
           <div className="hero-card-wrapper">
-            <img
-              src={heroJersey.imageUrl}
-              alt={heroJersey.name}
-              className="hero-jersey-img"
-              style={{ cursor: 'pointer' }}
-              onClick={() => onOpenDetails && onOpenDetails(heroJersey)}
-              title="Click to view kit details"
-            />
+            <div className="hero-img-relative">
+              <img
+                src={heroJersey.imageUrl}
+                alt={heroJersey.name}
+                className={`hero-jersey-img ${isOutOfStock ? 'hero-sold-out-img' : ''}`}
+                style={{ cursor: 'pointer' }}
+                onClick={() => onOpenDetails && onOpenDetails(heroJersey)}
+                title="Click to view kit details"
+              />
+              {isOutOfStock && (
+                <span className="hero-sold-out-badge">
+                  SOLD OUT
+                </span>
+              )}
+            </div>
 
             {/* Floating Quick-Action Glass Card */}
             <div className="hero-glass-card">
@@ -76,12 +87,19 @@ function Hero({ onQuickAdd, onOpenDetails }) {
                 title="Click to view kit details"
               >
                 <div>
-                  <span className="glass-team">{heroJersey.team}</span>
+                  <div className="glass-team-row">
+                    <span className="glass-team">{heroJersey.team}</span>
+                    {isOutOfStock && (
+                      <span className="hero-stock-pill-out">🔴 Sold Out</span>
+                    )}
+                  </div>
                   <h4 className="glass-title">{heroJersey.name}</h4>
                 </div>
                 <div className="glass-price-box">
                   <span className="glass-price">₹{heroJersey.price}</span>
-                  <span className="glass-old-price">₹{heroJersey.originalPrice}</span>
+                  {heroJersey.originalPrice && (
+                    <span className="glass-old-price">₹{heroJersey.originalPrice}</span>
+                  )}
                 </div>
               </div>
 
@@ -93,7 +111,8 @@ function Hero({ onQuickAdd, onOpenDetails }) {
                     <button
                       key={size}
                       type="button"
-                      className={`glass-chip ${heroSize === size ? 'active' : ''}`}
+                      disabled={isOutOfStock}
+                      className={`glass-chip ${heroSize === size ? 'active' : ''} ${isOutOfStock ? 'disabled' : ''}`}
                       onClick={() => setHeroSize(size)}
                     >
                       {size}
@@ -105,10 +124,16 @@ function Hero({ onQuickAdd, onOpenDetails }) {
               <div className="glass-actions-row">
                 <button
                   type="button"
-                  className="glass-add-btn"
-                  onClick={() => onQuickAdd && onQuickAdd(heroJersey, heroSize)}
+                  className={`glass-add-btn ${isOutOfStock ? 'sold-out' : ''}`}
+                  disabled={isOutOfStock}
+                  onClick={() => {
+                    if (!isOutOfStock && onQuickAdd) {
+                      onQuickAdd(heroJersey, heroSize);
+                    }
+                  }}
+                  title={isOutOfStock ? 'Currently out of stock' : `Add ${heroSize} to Bag`}
                 >
-                  + Add ({heroSize}) to Bag 🛒
+                  {isOutOfStock ? 'Sold Out — Join Waitlist' : `+ Add (${heroSize}) to Bag 🛒`}
                 </button>
                 <button
                   type="button"

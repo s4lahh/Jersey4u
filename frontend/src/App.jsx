@@ -257,9 +257,10 @@ function App() {
 
       {/* 2. Hero Section */}
       <Hero
+        jerseys={jerseys}
         onQuickAdd={handleAddToCart}
         onOpenDetails={(heroKit) => {
-          const match = jerseys.find((j) => j.team === 'Real Madrid') || jerseys[0] || heroKit;
+          const match = jerseys.find((j) => j.id === heroKit?.id || j.team === 'Real Madrid') || jerseys[0] || heroKit;
           setActiveJerseyDetail(match);
         }}
       />
