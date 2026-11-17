@@ -470,7 +470,8 @@ function AdminDashboardModal({
                         >
                           <option value="CONFIRMED">CONFIRMED</option>
                           <option value="PROCESSING">PROCESSING (Flocking &amp; QC)</option>
-                          <option value="SHIPPED">SHIPPED (BlueDart)</option>
+                          <option value="SHIPPED">SHIPPED (BlueDart In Transit)</option>
+                          <option value="OUT_FOR_DELIVERY">OUT FOR DELIVERY</option>
                           <option value="DELIVERED">DELIVERED</option>
                           <option value="CANCELLED">CANCELLED</option>
                         </select>

@@ -152,6 +152,50 @@ function MyOrdersModal({
     return `BD-IN-78${digits}`;
   }
 
+  function getStepLevel(status) {
+    const s = (status || '').toUpperCase();
+    switch (s) {
+      case 'CONFIRMED':
+      case 'CREATED':
+      case 'PENDING':
+        return 1;
+      case 'PROCESSING':
+        return 2;
+      case 'SHIPPED':
+      case 'DISPATCHED':
+        return 3;
+      case 'OUT_FOR_DELIVERY':
+        return 4;
+      case 'DELIVERED':
+      case 'COMPLETED':
+        return 5;
+      default:
+        return 1;
+    }
+  }
+
+  function getStepStatusClass(stepIndex, orderStatus) {
+    const currentLevel = getStepLevel(orderStatus);
+    if (currentLevel === 5) {
+      return 'completed';
+    }
+    if (stepIndex < currentLevel) {
+      return 'completed';
+    }
+    if (stepIndex === currentLevel) {
+      return 'active';
+    }
+    return 'upcoming';
+  }
+
+  function getStepCircleContent(stepIndex, orderStatus) {
+    const statusClass = getStepStatusClass(stepIndex, orderStatus);
+    if (statusClass === 'completed') {
+      return '✓';
+    }
+    return stepIndex;
+  }
+
   if (!isOpen) return null;
 
   return (
@@ -295,39 +339,61 @@ function MyOrdersModal({
                         </div>
                       </div>
 
-                      <div className="timeline-steps">
-                        <div className="timeline-step completed">
-                          <div className="step-circle">✓</div>
-                          <div className="step-content">
-                            <span className="step-title">Order Confirmed</span>
-                            <span className="step-sub">Verified &amp; logged in MySQL Vault</span>
-                          </div>
+                      {order.orderStatus === 'CANCELLED' ? (
+                        <div className="order-cancelled-timeline">
+                          <span>❌ This order has been cancelled by the store administrator. Any amount paid will be refunded within 3-5 business days.</span>
                         </div>
+                      ) : (
+                        <div className="timeline-steps">
+                          {/* Step 1: Confirmed */}
+                          <div className={`timeline-step ${getStepStatusClass(1, order.orderStatus)}`}>
+                            <div className={`step-circle ${getStepStatusClass(1, order.orderStatus) === 'active' ? 'pulse' : ''}`}>
+                              {getStepCircleContent(1, order.orderStatus)}
+                            </div>
+                            <div className="step-content">
+                              <span className="step-title">Order Confirmed</span>
+                              <span className="step-sub">Verified &amp; logged in MySQL Vault</span>
+                            </div>
+                          </div>
 
-                        <div className="timeline-step active">
-                          <div className="step-circle pulse">2</div>
-                          <div className="step-content">
-                            <span className="step-title">Flocking &amp; Quality Inspection</span>
-                            <span className="step-sub">Applying official badges and printing</span>
+                          {/* Step 2: Flocking & Quality */}
+                          <div className={`timeline-step ${getStepStatusClass(2, order.orderStatus)}`}>
+                            <div className={`step-circle ${getStepStatusClass(2, order.orderStatus) === 'active' ? 'pulse' : ''}`}>
+                              {getStepCircleContent(2, order.orderStatus)}
+                            </div>
+                            <div className="step-content">
+                              <span className="step-title">Flocking &amp; Quality Inspection</span>
+                              <span className="step-sub">Applying official badges and printing</span>
+                            </div>
                           </div>
-                        </div>
 
-                        <div className="timeline-step upcoming">
-                          <div className="step-circle">3</div>
-                          <div className="step-content">
-                            <span className="step-title">Handed to BlueDart Express</span>
-                            <span className="step-sub">Dispatched from Mumbai hub</span>
+                          {/* Step 3: Handed to BlueDart Express */}
+                          <div className={`timeline-step ${getStepStatusClass(3, order.orderStatus)}`}>
+                            <div className={`step-circle ${getStepStatusClass(3, order.orderStatus) === 'active' ? 'pulse' : ''}`}>
+                              {getStepCircleContent(3, order.orderStatus)}
+                            </div>
+                            <div className="step-content">
+                              <span className="step-title">Handed to BlueDart Express</span>
+                              <span className="step-sub">Dispatched from Mumbai hub</span>
+                            </div>
                           </div>
-                        </div>
 
-                        <div className="timeline-step upcoming">
-                          <div className="step-circle">4</div>
-                          <div className="step-content">
-                            <span className="step-title">Out for Delivery</span>
-                            <span className="step-sub">Arriving at your doorstep</span>
+                          {/* Step 4: Out for Delivery / Delivered */}
+                          <div className={`timeline-step ${getStepStatusClass(4, order.orderStatus)}`}>
+                            <div className={`step-circle ${getStepStatusClass(4, order.orderStatus) === 'active' ? 'pulse' : ''}`}>
+                              {getStepCircleContent(4, order.orderStatus)}
+                            </div>
+                            <div className="step-content">
+                              <span className="step-title">
+                                {order.orderStatus === 'DELIVERED' ? 'Delivered' : 'Out for Delivery'}
+                              </span>
+                              <span className="step-sub">
+                                {order.orderStatus === 'DELIVERED' ? 'Arrived safely at your doorstep' : 'Arriving at your doorstep'}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   )}
 
