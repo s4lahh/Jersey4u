@@ -13,6 +13,7 @@ function Navbar({
   currentUser = null,
   onOpenAuth,
   onOpenMyOrders,
+  onOpenAdmin,
   onLogout
 }) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -158,6 +159,23 @@ function Navbar({
                       <span className="dropdown-user-email">{currentUser.email}</span>
                     </div>
                     <div className="dropdown-sep"></div>
+                    {currentUser.role === 'ROLE_ADMIN' && (
+                      <>
+                        <button
+                          type="button"
+                          className="dropdown-action-btn admin-action"
+                          onClick={() => {
+                            setIsUserMenuOpen(false);
+                            if (onOpenAdmin) onOpenAdmin();
+                          }}
+                        >
+                          <span className="dropdown-action-icon">⚙️</span>
+                          <span>Admin Dashboard</span>
+                        </button>
+                        <div className="dropdown-sep"></div>
+                      </>
+                    )}
+
                     <button
                       type="button"
                       className="dropdown-action-btn"

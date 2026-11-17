@@ -10,6 +10,7 @@ import WishlistDrawer from './components/WishlistDrawer';
 import CheckoutModal from './components/CheckoutModal';
 import AuthModal from './components/AuthModal';
 import MyOrdersModal from './components/MyOrdersModal';
+import AdminDashboardModal from './components/AdminDashboardModal';
 import './App.css';
 
 function App() {
@@ -65,6 +66,7 @@ function App() {
   });
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isMyOrdersOpen, setIsMyOrdersOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   // Sync Cart & Wishlist to localStorage on changes
   useEffect(() => {
@@ -249,6 +251,7 @@ function App() {
         currentUser={currentUser}
         onOpenAuth={() => setIsAuthOpen(true)}
         onOpenMyOrders={() => setIsMyOrdersOpen(true)}
+        onOpenAdmin={() => setIsAdminOpen(true)}
         onLogout={handleLogout}
       />
 
@@ -414,6 +417,15 @@ function App() {
         user={currentUser}
         jerseys={jerseys}
         onOpenJerseyDetails={(kit) => setActiveJerseyDetail(kit)}
+      />
+
+      {/* 12. Store Manager Admin Dashboard (Phase 10) */}
+      <AdminDashboardModal
+        isOpen={isAdminOpen}
+        onClose={() => setIsAdminOpen(false)}
+        authToken={authToken}
+        jerseys={jerseys}
+        onRefreshJerseys={fetchJerseysFromVault}
       />
     </div>
   );

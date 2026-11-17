@@ -52,6 +52,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/orders/my-orders").authenticated()
                 .requestMatchers("/api/auth/me").authenticated()
 
+                // Admin Capabilities (Requires ROLE_ADMIN in JWT)
+                .requestMatchers(HttpMethod.POST, "/api/jerseys/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/jerseys/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/jerseys/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/jerseys/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/orders/*/status").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/orders").hasRole("ADMIN")
+
                 // Default: allow remaining read-only or static routes
                 .anyRequest().permitAll()
             )

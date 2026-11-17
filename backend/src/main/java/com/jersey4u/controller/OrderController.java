@@ -104,6 +104,23 @@ public class OrderController {
     }
 
     /**
+     * PATCH /api/orders/{orderCode}/status -> Admin updates order fulfillment status.
+     */
+    @PatchMapping("/{orderCode}/status")
+    public ResponseEntity<?> updateOrderStatus(
+            @PathVariable String orderCode,
+            @RequestBody Map<String, String> body
+    ) {
+        try {
+            String newStatus = body != null ? body.get("status") : null;
+            CustomerOrder updated = orderService.updateOrderStatus(orderCode, newStatus);
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+        }
+    }
+
+    /**
      * GET /api/orders -> List all orders.
      */
     @GetMapping

@@ -331,6 +331,16 @@
   color: #0f172a;
 }
 
+.dropdown-action-btn.admin-action {
+  color: #b91c1c;
+  font-weight: 800;
+}
+
+.dropdown-action-btn.admin-action:hover {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
 .dropdown-action-btn.signout-action {
   color: #b91c1c;
 }

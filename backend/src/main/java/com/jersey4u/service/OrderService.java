@@ -264,6 +264,20 @@ public class OrderService {
         return order;
     }
 
+    /**
+     * Updates an order's fulfillment status (Admin capability).
+     */
+    @Transactional
+    public CustomerOrder updateOrderStatus(String orderCode, String newStatus) {
+        if (!hasText(newStatus)) {
+            throw new IllegalArgumentException("Status is required.");
+        }
+        CustomerOrder order = orderRepository.findByOrderCode(orderCode)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderCode));
+        order.setOrderStatus(newStatus.trim().toUpperCase());
+        return orderRepository.save(order);
+    }
+
     private BigDecimal calculateVerifiedUnitPrice(BigDecimal basePrice, OrderItemRequest itemReq) {
         boolean hasPrinting = hasText(itemReq.getCustomName()) || hasText(itemReq.getCustomNumber());
         BigDecimal printFee = BigDecimal.ZERO;

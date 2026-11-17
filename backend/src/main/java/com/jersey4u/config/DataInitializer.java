@@ -1,8 +1,11 @@
 package com.jersey4u.config;
 
 import com.jersey4u.model.Jersey;
+import com.jersey4u.model.User;
 import com.jersey4u.repository.JerseyRepository;
+import com.jersey4u.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -13,14 +16,41 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final JerseyRepository jerseyRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DataInitializer(JerseyRepository jerseyRepository) {
+    public DataInitializer(
+            JerseyRepository jerseyRepository,
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder
+    ) {
         this.jerseyRepository = jerseyRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        // Only seed data if the table is currently empty
+        seedAdminUser();
+        seedJerseys();
+    }
+
+    private void seedAdminUser() {
+        if (!userRepository.existsByEmailIgnoreCase("admin@jersey4u.in")) {
+            User admin = new User(
+                    "Vault Admin",
+                    "admin@jersey4u.in",
+                    passwordEncoder.encode("admin123"),
+                    "9876500000",
+                    "ROLE_ADMIN"
+            );
+            userRepository.save(admin);
+            System.out.println("✅ DataInitializer: Seeded default admin account (admin@jersey4u.in / admin123)");
+        }
+    }
+
+    private void seedJerseys() {
+        // Only seed jerseys if table is empty
         if (jerseyRepository.count() > 0) {
             return;
         }

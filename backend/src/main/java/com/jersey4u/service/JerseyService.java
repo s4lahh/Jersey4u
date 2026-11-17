@@ -54,4 +54,37 @@ public class JerseyService {
     public Jersey saveJersey(Jersey jersey) {
         return jerseyRepository.save(jersey);
     }
+
+    public Jersey updateJersey(Long id, Jersey updated) {
+        Jersey existing = jerseyRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Jersey not found with id: " + id));
+
+        if (updated.getName() != null) existing.setName(updated.getName().trim());
+        if (updated.getTeam() != null) existing.setTeam(updated.getTeam().trim());
+        if (updated.getLeague() != null) existing.setLeague(updated.getLeague().trim());
+        if (updated.getSeason() != null) existing.setSeason(updated.getSeason().trim());
+        if (updated.getKitType() != null) existing.setKitType(updated.getKitType().trim());
+        if (updated.getPrice() != null) existing.setPrice(updated.getPrice());
+        if (updated.getOriginalPrice() != null) existing.setOriginalPrice(updated.getOriginalPrice());
+        if (updated.getImageUrl() != null) existing.setImageUrl(updated.getImageUrl().trim());
+        if (updated.getDescription() != null) existing.setDescription(updated.getDescription().trim());
+        existing.setInStock(updated.isInStock());
+        existing.setFeatured(updated.isFeatured());
+
+        return jerseyRepository.save(existing);
+    }
+
+    public Jersey toggleStock(Long id) {
+        Jersey jersey = jerseyRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Jersey not found with id: " + id));
+        jersey.setInStock(!jersey.isInStock());
+        return jerseyRepository.save(jersey);
+    }
+
+    public void deleteJersey(Long id) {
+        if (!jerseyRepository.existsById(id)) {
+            throw new IllegalArgumentException("Jersey not found with id: " + id);
+        }
+        jerseyRepository.deleteById(id);
+    }
 }
