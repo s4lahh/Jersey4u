@@ -64,6 +64,7 @@ function AdminDashboardModal({
       const res = await fetch(`http://localhost:8081/api/jerseys/${jerseyId}/toggle-stock`, {
         method: 'PATCH',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${authToken}`
         }
       });

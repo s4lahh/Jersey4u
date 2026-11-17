@@ -38,6 +38,9 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Allow all CORS preflight OPTIONS requests unconditionally
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                 // Public Authentication Endpoints
                 .requestMatchers("/api/auth/**").permitAll()
 
@@ -57,7 +60,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/jerseys/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/jerseys/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/jerseys/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PATCH, "/api/orders/*/status").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/orders/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/orders").hasRole("ADMIN")
 
                 // Default: allow remaining read-only or static routes
@@ -86,7 +89,7 @@ public class SecurityConfig {
                 "http://127.0.0.1:5173",
                 "http://localhost:3000"
         ));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setExposedHeaders(List.of("Authorization"));
         config.setAllowCredentials(true);
