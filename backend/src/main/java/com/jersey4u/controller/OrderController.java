@@ -78,6 +78,19 @@ public class OrderController {
     }
 
     /**
+     * GET /api/orders/my-orders -> Returns list of past orders for the authenticated user (JWT).
+     */
+    @GetMapping("/my-orders")
+    public ResponseEntity<?> getMyOrders(org.springframework.security.core.Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Not authenticated"));
+        }
+        String userEmail = authentication.getName();
+        List<CustomerOrder> myOrders = orderRepository.findByCustomerEmailIgnoreCaseOrderByCreatedAtDesc(userEmail);
+        return ResponseEntity.ok(myOrders);
+    }
+
+    /**
      * GET /api/orders -> List all orders.
      */
     @GetMapping

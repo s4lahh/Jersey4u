@@ -214,6 +214,45 @@
   border-radius: 9999px;
 }
 
+.user-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.signin-btn {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+
+.signin-btn:hover {
+  background: #f8fafc;
+  border-color: #0f172a;
+}
+
+.user-btn {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.user-btn:hover {
+  background: #dbeafe;
+  border-color: #3b82f6;
+}
+
+.logout-btn {
+  padding: 0.45rem 0.6rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
 .cart-badge {
   background: #ef4444;
   color: #ffffff;

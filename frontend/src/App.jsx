@@ -8,6 +8,8 @@ import ProductDetailModal from './components/ProductDetailModal';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
 import CheckoutModal from './components/CheckoutModal';
+import AuthModal from './components/AuthModal';
+import MyOrdersModal from './components/MyOrdersModal';
 import './App.css';
 
 function App() {
@@ -16,12 +18,26 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 2. STATE: Cart Items List
-  const [cartItems, setCartItems] = useState([]);
+  // 2. STATE: Cart Items List (persisted in localStorage)
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem('jersey4u_cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // 3. STATE: Wishlist Items List
-  const [wishlistItems, setWishlistItems] = useState([]);
+  // 3. STATE: Wishlist Items List (persisted in localStorage)
+  const [wishlistItems, setWishlistItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem('jersey4u_wishlist');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
 
   // 4. STATE: Selected League / Club Filter
@@ -36,6 +52,28 @@ function App() {
 
   // 7. STATE: Checkout Modal (Lesson 8)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
+  // 8. STATE: Spring Security 6 & JWT Auth (Phase 9)
+  const [authToken, setAuthToken] = useState(() => localStorage.getItem('jersey4u_token') || null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('jersey4u_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isMyOrdersOpen, setIsMyOrdersOpen] = useState(false);
+
+  // Sync Cart & Wishlist to localStorage on changes
+  useEffect(() => {
+    localStorage.setItem('jersey4u_cart', JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  useEffect(() => {
+    localStorage.setItem('jersey4u_wishlist', JSON.stringify(wishlistItems));
+  }, [wishlistItems]);
 
   // LESSON 6: Fetch Real Kits from Spring Boot REST API
   async function fetchJerseysFromVault() {
@@ -174,6 +212,28 @@ function App() {
     );
   }
 
+  // Handler: Successful Login / Registration with JWT
+  function handleAuthSuccess(data) {
+    setAuthToken(data.token);
+    const userObj = {
+      name: data.name,
+      email: data.email,
+      phone: data.phone || '',
+      role: data.role
+    };
+    setCurrentUser(userObj);
+    localStorage.setItem('jersey4u_token', data.token);
+    localStorage.setItem('jersey4u_user', JSON.stringify(userObj));
+  }
+
+  // Handler: Logout (clears JWT from memory and localStorage)
+  function handleLogout() {
+    setAuthToken(null);
+    setCurrentUser(null);
+    localStorage.removeItem('jersey4u_token');
+    localStorage.removeItem('jersey4u_user');
+  }
+
   return (
     <div className="app-layout">
       {/* 1. Header with Connected Navigation & Triggers */}
@@ -186,6 +246,10 @@ function App() {
         onSearchChange={setSearchQuery}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenWishlist={() => setIsWishlistOpen(true)}
+        currentUser={currentUser}
+        onOpenAuth={() => setIsAuthOpen(true)}
+        onOpenMyOrders={() => setIsMyOrdersOpen(true)}
+        onLogout={handleLogout}
       />
 
       {/* 2. Hero Section */}
@@ -331,7 +395,23 @@ function App() {
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         cartItems={cartItems}
+        currentUser={currentUser}
         onOrderSuccess={() => setCartItems([])}
+      />
+
+      {/* 10. Spring Security 6 & JWT Auth Modal (Phase 9) */}
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+      />
+
+      {/* 11. Customer Order History Modal (Phase 9) */}
+      <MyOrdersModal
+        isOpen={isMyOrdersOpen}
+        onClose={() => setIsMyOrdersOpen(false)}
+        authToken={authToken}
+        user={currentUser}
       />
     </div>
   );

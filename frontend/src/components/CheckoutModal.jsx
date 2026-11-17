@@ -1,20 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './CheckoutModal.css';
 
 function CheckoutModal({
   isOpen,
   onClose,
   cartItems = [],
-  onOrderSuccess
+  onOrderSuccess,
+  currentUser = null
 }) {
   // Controlled Shipping & Payment Form State
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerName, setCustomerName] = useState(currentUser?.name || '');
+  const [customerPhone, setCustomerPhone] = useState(currentUser?.phone || '');
+  const [customerEmail, setCustomerEmail] = useState(currentUser?.email || '');
   const [shippingAddress, setShippingAddress] = useState('');
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('RAZORPAY'); // 'RAZORPAY' | 'COD'
+
+  useEffect(() => {
+    if (currentUser) {
+      if (!customerName) setCustomerName(currentUser.name || '');
+      if (!customerEmail) setCustomerEmail(currentUser.email || '');
+      if (!customerPhone) setCustomerPhone(currentUser.phone || '');
+    }
+  }, [currentUser, isOpen]);
 
   // Submission & Confirmation State
   const [isSubmitting, setIsSubmitting] = useState(false);

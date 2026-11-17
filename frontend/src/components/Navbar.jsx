@@ -8,7 +8,11 @@ function Navbar({
   searchQuery = '',
   onSearchChange,
   onOpenCart,
-  onOpenWishlist
+  onOpenWishlist,
+  currentUser = null,
+  onOpenAuth,
+  onOpenMyOrders,
+  onLogout
 }) {
   const navCategories = [
     { id: 'all', label: 'All Kits' },
@@ -113,6 +117,38 @@ function Navbar({
                 </button>
               )}
             </div>
+
+            {/* User Auth / Orders Button */}
+            {currentUser ? (
+              <div className="user-nav-group">
+                <button
+                  type="button"
+                  className="utility-btn user-btn"
+                  onClick={onOpenMyOrders}
+                  title="View My Orders"
+                >
+                  👤 <span className="user-name">{currentUser.name ? currentUser.name.split(' ')[0] : 'Fan'}</span>
+                </button>
+                <button
+                  type="button"
+                  className="utility-btn logout-btn"
+                  onClick={onLogout}
+                  title="Sign Out"
+                  aria-label="Sign Out"
+                >
+                  🚪
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="utility-btn signin-btn"
+                onClick={onOpenAuth}
+                title="Sign In or Register"
+              >
+                👤 <span className="signin-text">Sign In</span>
+              </button>
+            )}
 
             {/* Wishlist Button */}
             <button
