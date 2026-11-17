@@ -3,21 +3,49 @@ import './Hero.css';
 
 function Hero({ jerseys = [], onQuickAdd, onOpenDetails }) {
   const [heroSize, setHeroSize] = useState('L');
+  const [spotlightIndex, setSpotlightIndex] = useState(0);
   const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
-  const defaultHero = {
-    id: 1,
-    name: 'Real Madrid 2024/25 Authentic Home Kit',
-    team: 'Real Madrid',
+  // 1. Filter ONLY jerseys that are currently IN STOCK (inStock !== false)
+  const inStockJerseys = jerseys.filter((j) => j.inStock !== false);
+
+  // Fallback default if catalog has not loaded yet
+  const defaultFallback = {
+    id: 2,
+    name: 'FC Barcelona 125th Anniversary Home Kit',
+    team: 'FC Barcelona',
     price: 899,
     originalPrice: 1499,
-    imageUrl: '/images/jerseys/real-madrid-home.jpg',
+    imageUrl: '/images/jerseys/barcelona-home.jpg',
     inStock: true
   };
 
-  // Dynamically resolve Real Madrid kit from live backend state
-  const heroJersey = jerseys.find((j) => j.team === 'Real Madrid' || j.id === 1) || defaultHero;
+  // Sort available in-stock kits: prioritize Real Madrid if in stock, followed by others
+  const sortedInStock = [...inStockJerseys].sort((a, b) => {
+    if (a.team === 'Real Madrid') return -1;
+    if (b.team === 'Real Madrid') return 1;
+    return 0;
+  });
+
+  // Display list contains ONLY in-stock products (or fallback if all are out of stock)
+  const displayList = sortedInStock.length > 0 
+    ? sortedInStock 
+    : (jerseys.length > 0 ? jerseys : [defaultFallback]);
+
+  // Ensure current index is valid
+  const safeIndex = spotlightIndex >= displayList.length ? 0 : spotlightIndex;
+  const heroJersey = displayList[safeIndex];
   const isOutOfStock = heroJersey.inStock === false;
+
+  function handlePrev(e) {
+    e.stopPropagation();
+    setSpotlightIndex((prev) => (prev - 1 + displayList.length) % displayList.length);
+  }
+
+  function handleNext(e) {
+    e.stopPropagation();
+    setSpotlightIndex((prev) => (prev + 1) % displayList.length);
+  }
 
   return (
     <section className="hero-section">
@@ -62,6 +90,41 @@ function Hero({ jerseys = [], onQuickAdd, onOpenDetails }) {
           <div className="hero-spotlight-glow"></div>
 
           <div className="hero-card-wrapper">
+            {/* Top Bar on Spotlight: Stock Status + In-Stock Carousel Controls */}
+            <div className="hero-spotlight-topbar">
+              <span className={`hero-stock-badge ${isOutOfStock ? 'out' : 'in'}`}>
+                {isOutOfStock ? '🔴 All Kits Sold Out' : '🟢 In Stock'}
+              </span>
+
+              {displayList.length > 1 && (
+                <div className="hero-carousel-nav">
+                  <span className="hero-counter-label">
+                    {safeIndex + 1} / {displayList.length}
+                  </span>
+                  <div className="hero-nav-btns">
+                    <button
+                      type="button"
+                      className="hero-nav-btn"
+                      onClick={handlePrev}
+                      title="Previous in-stock kit"
+                      aria-label="Previous kit"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      className="hero-nav-btn"
+                      onClick={handleNext}
+                      title="Next in-stock kit"
+                      aria-label="Next kit"
+                    >
+                      ›
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="hero-img-relative">
               <img
                 src={heroJersey.imageUrl}
@@ -71,11 +134,6 @@ function Hero({ jerseys = [], onQuickAdd, onOpenDetails }) {
                 onClick={() => onOpenDetails && onOpenDetails(heroJersey)}
                 title="Click to view kit details"
               />
-              {isOutOfStock && (
-                <span className="hero-sold-out-badge">
-                  SOLD OUT
-                </span>
-              )}
             </div>
 
             {/* Floating Quick-Action Glass Card */}
@@ -87,12 +145,7 @@ function Hero({ jerseys = [], onQuickAdd, onOpenDetails }) {
                 title="Click to view kit details"
               >
                 <div>
-                  <div className="glass-team-row">
-                    <span className="glass-team">{heroJersey.team}</span>
-                    {isOutOfStock && (
-                      <span className="hero-stock-pill-out">🔴 Sold Out</span>
-                    )}
-                  </div>
+                  <span className="glass-team">{heroJersey.team}</span>
                   <h4 className="glass-title">{heroJersey.name}</h4>
                 </div>
                 <div className="glass-price-box">
